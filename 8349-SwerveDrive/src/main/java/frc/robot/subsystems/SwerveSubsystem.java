@@ -4,21 +4,33 @@
 
 package frc.robot.subsystems;
 
+import java.io.File;
+
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.io.File;
-import edu.wpi.first.wpilibj.Filesystem;
-import swervelib.parser.SwerveParser;
+import frc.robot.Constants;
 import swervelib.SwerveDrive;
-import edu.wpi.first.math.util.Units;
+import swervelib.parser.SwerveParser;
 
 
 
 
 public class SwerveSubsystem extends SubsystemBase {
-  /** Creates a new ExampleSubsystem. */
-
-  public SwerveSubsystem() {}
+  /** Creates a new SwerveSubsystem. */
+  double maximumSpeed = Units.feetToMeters(4.5);
+  File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(),"swerve");
+  SwerveDrive swerveDrive;
+  public SwerveSubsystem() {
+    try 
+    {
+      swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(Constants.MAX_SPEED);
+    } catch (Exception e) 
+    {
+      throw new RuntimeException(e);
+    }
+  }
 
   /**
    * Example command factory method.
