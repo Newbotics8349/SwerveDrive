@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import java.io.File;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,7 +18,6 @@ import swervelib.parser.SwerveParser;
 
 public class SwerveSubsystem extends SubsystemBase {
   /** Creates a new SwerveSubsystem. */
-  double maximumSpeed = Units.feetToMeters(4.5);
   File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(),"swerve");
   SwerveDrive swerveDrive;
   public SwerveSubsystem() {
