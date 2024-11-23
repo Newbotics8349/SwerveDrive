@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import java.io.File;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -42,6 +43,9 @@ public class SwerveSubsystem extends SubsystemBase {
         () -> {
           /* one-time action goes here */
         });
+  }
+  public void TeleopDrive(double x, double y, double r){
+    swerveDrive.drive(new Translation2d(x,y), r, false, false);
   }
 
   /**
