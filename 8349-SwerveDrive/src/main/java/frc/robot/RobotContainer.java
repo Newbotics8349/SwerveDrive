@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.TeleopDrive;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
@@ -44,6 +45,10 @@ public class RobotContainer {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     new Trigger(m_swerveSubsystem::exampleCondition)
         .onTrue(new ExampleCommand(m_swerveSubsystem));
+      
+    m_swerveSubsystem.setDefaultCommand(new TeleopDrive(m_swerveSubsystem, () -> m_driverController.getLeftX(), () -> m_driverController.getLeftY(), () -> m_driverController.getRightX()));
+
+    
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
