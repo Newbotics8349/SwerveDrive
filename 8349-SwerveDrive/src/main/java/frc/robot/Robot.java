@@ -5,20 +5,25 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.io.File;
 import java.io.IOException;
+
+import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
 import swervelib.parser.SwerveParser;
 
-/**
- * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
- * described in the TimedRobot documentation. If you change the name of this class or the package after creating this
- * project, you must also update the build.gradle file in the project.
- */
-public class Robot extends TimedRobot
+// Extends LoggedRobot rathet than TimedRobot for advantage kit  -> "https://docs.advantagekit.org/installation/"
+public class Robot extends LoggedRobot
 {
 
   private static Robot   instance;
@@ -27,9 +32,22 @@ public class Robot extends TimedRobot
   private RobotContainer m_robotContainer;
 
   private Timer disabledTimer;
-
+  
   public Robot()
-  {
+  {   
+    Logger.recordMetadata("ProjectName", "8349SwerveOffseason");
+
+    // Checks if robot is "real" (not simulated) and sets up logging parameter
+    if (isReal()) {
+      Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+      new PowerDistribution(1, ModuleType.kCTRE); // Enables power distribution logging
+    } 
+
+    Logger.addDataReceiver(new NT4Publisher());       // Publish data to NetworkTables
+    
+    // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
+    Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
+
     instance = this;
   }
 
