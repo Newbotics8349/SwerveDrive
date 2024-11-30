@@ -101,7 +101,7 @@ public class SwerveSubsystem extends SubsystemBase
     else{
       visionIO = new VisionSim();
     }
-    visionIO.init("camera");
+    visionIO.init("cameramain");
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
     //  In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
     //  The encoder resolution per motor revolution is 1 per motor revolution.
@@ -160,15 +160,16 @@ public class SwerveSubsystem extends SubsystemBase
   public void periodic()
   {
     swerveDrive.addVisionMeasurement(this.visionIO.get_vision_pose().toPose2d(), this.visionIO.get_timestamp());
+    // Change to a class method
     SwerveSubsystem.current_pose = getPose();
     Logger.recordOutput("Pose", getPose());
     Logger.recordOutput("CameraPose", swerveDrive.swerveDrivePoseEstimator.getEstimatedPosition());
-    if (!visionIO.get_pose_apriltag_relative().isEmpty()){
-      Logger.recordOutput("TagToRobot", visionIO.get_pose_apriltag_relative().get());
-    }
+    // if (!visionIO.get_pose_apriltag_relative().isEmpty()){
+    //   Logger.recordOutput("TagToRobot", visionIO.get_pose_apriltag_relative().get());
+    // }
 
     
-    // When vision is enabled we must manually update odometry in SwerveDrive
+    // When vision is enabled we must manually update odometry in SwerveDrive 
     if (visionDriveTest)
     {
       swerveDrive.updateOdometry();
