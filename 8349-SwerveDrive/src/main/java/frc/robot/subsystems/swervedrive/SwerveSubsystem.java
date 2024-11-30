@@ -8,8 +8,10 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
 
+import javax.sound.midi.VoiceStatus;
 import javax.swing.plaf.basic.BasicBorders.MarginBorder;
 
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 
@@ -23,11 +25,14 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -42,6 +47,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionReal;
+import frc.robot.subsystems.vision.VisionSim;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -53,8 +61,13 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
+import frc.robot.Robot;
+
 public class SwerveSubsystem extends SubsystemBase
 {
+  public static Pose2d current_pose;
+
+
 
   /**
    * PhotonVision class to keep an accurate odometry.
@@ -73,6 +86,8 @@ public class SwerveSubsystem extends SubsystemBase
    */
   private final boolean visionDriveTest = false;
 
+  VisionIO visionIO;
+
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -80,6 +95,13 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public SwerveSubsystem(File directory)
   {
+    if (Robot.isReal()){
+      visionIO = new VisionReal();
+    }
+    else{
+      visionIO = new VisionSim();
+    }
+    visionIO.init("camera");
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
     //  In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
     //  The encoder resolution per motor revolution is 1 per motor revolution.
@@ -137,6 +159,15 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
+    swerveDrive.addVisionMeasurement(this.visionIO.get_vision_pose().toPose2d(), this.visionIO.get_timestamp());
+    SwerveSubsystem.current_pose = getPose();
+    Logger.recordOutput("Pose", getPose());
+    Logger.recordOutput("CameraPose", swerveDrive.swerveDrivePoseEstimator.getEstimatedPosition());
+    if (!visionIO.get_pose_apriltag_relative().isEmpty()){
+      Logger.recordOutput("TagToRobot", visionIO.get_pose_apriltag_relative().get());
+    }
+
+    
     // When vision is enabled we must manually update odometry in SwerveDrive
     if (visionDriveTest)
     {
@@ -260,6 +291,7 @@ public class SwerveSubsystem extends SubsystemBase
   public Command getAutonomousCommand(String pathName)
   {
     // Create a path following command using AutoBuilder. This will also trigger event markers.
+    
     return new PathPlannerAuto(pathName);
   }
 
@@ -505,6 +537,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public Pose2d getPose()
   {
+    
     return swerveDrive.getPose();
   }
 
