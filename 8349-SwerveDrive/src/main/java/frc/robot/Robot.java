@@ -64,9 +64,9 @@ public class Robot extends LoggedRobot
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
-    // PWM port 9
+    // PWM port 0
     // Must be a PWM header, not MXP or DIO
-    AddressableLED m_led = new AddressableLED(9);
+    AddressableLED m_led = new AddressableLED(0);
 
     // Reuse buffer
     // Default to a length of 60, start empty output
@@ -75,7 +75,8 @@ public class Robot extends LoggedRobot
     m_led.setLength(m_ledBuffer.getLength());
 
     // Set the data
-    m_led.setData(m_ledBuffer);
+    m_led.setData(m_ledBuffer
+    );
     m_led.start();
   }
 
