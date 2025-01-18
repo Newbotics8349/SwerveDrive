@@ -44,6 +44,19 @@ public class Robot extends LoggedRobot
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
 
     instance = this;
+    // PWM port 0
+    // Must be a PWM header, not MXP or DIO
+    AddressableLED m_led = new AddressableLED(0);
+
+    // Reuse buffer
+    // Default to a length of 60, start empty output
+    // Length is expensive to set, so only set it once, then just update data
+    AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(60);
+    m_led.setLength(m_ledBuffer.getLength());
+
+    // Set the data
+    m_led.setData(m_ledBuffer);
+    m_led.start();
   }
 
   public static Robot getInstance()
@@ -64,20 +77,6 @@ public class Robot extends LoggedRobot
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
-    // PWM port 0
-    // Must be a PWM header, not MXP or DIO
-    AddressableLED m_led = new AddressableLED(0);
-
-    // Reuse buffer
-    // Default to a length of 60, start empty output
-    // Length is expensive to set, so only set it once, then just update data
-    AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(60);
-    m_led.setLength(m_ledBuffer.getLength());
-
-    // Set the data
-    m_led.setData(m_ledBuffer
-    );
-    m_led.start();
   }
 
   /**
