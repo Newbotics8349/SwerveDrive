@@ -4,15 +4,9 @@
 
 package frc.robot;
 
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -24,14 +18,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot
 {
 
-  private final AddressableLED m_led;
-  private final AddressableLEDBuffer m_ledBuffer;
-
-  // Create an LED pattern that will display a rainbow across
-  // all hues at maximum saturation and half brightness
-  private final LEDPattern m_rainbow = LEDPattern.rainbow(255, 128);
-
-
   private static Robot   instance;
   private        Command m_autonomousCommand;
 
@@ -42,22 +28,8 @@ public class Robot extends TimedRobot
   public Robot()
   {
     instance = this;
-    // PWM port 0
-    // Must be a PWM header, not MXP or DIO
-    m_led = new AddressableLED(0);
-
-    // Reuse buffer
-    // Default to a length of 60, start empty output
-    // Length is expensive to set, so only set it once, then just update data
-    m_ledBuffer = new AddressableLEDBuffer(60);
-    m_led.setLength(m_ledBuffer.getLength());
-
-    // Set the data
-    m_led.setData(m_ledBuffer);
-    m_led.start();
   }
 
-  
   public static Robot getInstance()
   {
     return instance;
@@ -98,9 +70,6 @@ public class Robot extends TimedRobot
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-
-    m_rainbow.applyTo(m_ledBuffer);
-    m_led.setData(m_ledBuffer);
   }
 
   /**

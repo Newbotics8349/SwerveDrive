@@ -1,4 +1,9 @@
 {
+  "Keyboard 0 Settings": {
+    "window": {
+      "visible": true
+    }
+  },
   "keyboardJoysticks": [
     {
       "axisConfig": [
@@ -96,14 +101,10 @@
       "guid": "Keyboard0"
     },
     {
-      "guid": "03000000790000000600000000000000",
-      "name": "BUTTONS"
+      "guid": "030000004c050000c405000000000000"
     },
     {
-      "guid": "Keyboard1"
-    },
-    {
-      "guid": "Keyboard2"
+      "useGamepad": true
     }
   ]
 }
