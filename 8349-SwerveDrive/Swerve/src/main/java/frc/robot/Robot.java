@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -17,6 +18,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
+  public Joystick joystick;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -49,7 +51,16 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    joystick = new Joystick(0);
+    if (joystick.getRawButtonPressed(1)) {
+      System.out.println("Button 1 pressed");
+    }else if (joystick.getRawButtonPressed(3)) {
+      System.out.println("Button 3 pressed");
+    }else if (joystick.getRawButtonPressed(5)) {
+    System.out.println("Button 5 pressed");
+    }
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
