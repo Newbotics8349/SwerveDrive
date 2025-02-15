@@ -18,7 +18,8 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
-  public Joystick joystick;
+  public Joystick joystick = new Joystick(0);
+  public Joystick joystick2 = new Joystick(1);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -52,13 +53,20 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    joystick = new Joystick(0);
     if (joystick.getRawButtonPressed(1)) {
-      System.out.println("Button 1 pressed");
+      System.out.println("Joystick 1: Button 1");
     }else if (joystick.getRawButtonPressed(3)) {
-      System.out.println("Button 3 pressed");
+      System.out.println("Joystick 1: Button 3");
     }else if (joystick.getRawButtonPressed(5)) {
-    System.out.println("Button 5 pressed");
+    System.out.println("Joystick 1: Button 5");
+    }
+
+    if (joystick2.getRawButtonPressed(1)) {
+      System.out.println("Joystick 2: Button 1");
+    }else if (joystick2.getRawButtonPressed(3)) {
+      System.out.println("Joystick 2: Button 3");
+    }else if (joystick2.getRawButtonPressed(5)) {
+    System.out.println("Joystick 2: Button 5");
     }
   }
 
