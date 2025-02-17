@@ -53,21 +53,21 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    if (joystick.getRawButtonPressed(1)) {
-      System.out.println("Joystick 1: Button 1");
-    }else if (joystick.getRawButtonPressed(3)) {
-      System.out.println("Joystick 1: Button 3");
-    }else if (joystick.getRawButtonPressed(5)) {
-    System.out.println("Joystick 1: Button 5");
-    }
+    // if (joystick.getRawButtonPressed(1)) {
+    //   System.out.println("Joystick 1: Button 1");
+    // } else if (joystick.getRawButtonPressed(3)) {
+    //   System.out.println("Joystick 1: Button 3");
+    // } else if (joystick.getRawButtonPressed(5)) {
+    // System.out.println("Joystick 1: Button 5");
+    // }
 
-    if (joystick2.getRawButtonPressed(1)) {
-      System.out.println("Joystick 2: Button 1");
-    }else if (joystick2.getRawButtonPressed(3)) {
-      System.out.println("Joystick 2: Button 3");
-    }else if (joystick2.getRawButtonPressed(5)) {
-    System.out.println("Joystick 2: Button 5");
-    }
+    // if (joystick2.getRawButtonPressed(1)) {
+    //   System.out.println("Joystick 2: Button 1");
+    // } else if (joystick2.getRawButtonPressed(3)) {
+    //   System.out.println("Joystick 2: Button 3");
+    // } else if (joystick2.getRawButtonPressed(5)) {
+    // System.out.println("Joystick 2: Button 5");
+    // }
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */

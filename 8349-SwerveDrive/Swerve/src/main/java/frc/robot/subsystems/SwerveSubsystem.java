@@ -5,11 +5,22 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 import java.io.File;
+import java.util.List;
 import java.util.function.Supplier;
+
+import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
+import com.pathplanner.lib.util.DriveFeedforwards;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import swervelib.parser.SwerveParser;
@@ -19,6 +30,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import static edu.wpi.first.units.Units.Meter;
+
+import edu.wpi.first.wpilibj.DriverStation;
+
+
 
 public class SwerveSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
@@ -86,6 +101,47 @@ public class SwerveSubsystem extends SubsystemBase {
     return run(() -> {
       swerveDrive.driveFieldOriented(velocity.get());
     });
+  }
+
+  public void callingDrive(ChassisSpeeds chassisSpeeds, DriveFeedforwards driveFeedforwards) {
+    swerveDrive.drive(chassisSpeeds);
+  }
+  public Command followPathCommand()
+  {
+    try {
+      System.out.println("Button pressed");
+      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+        new Pose2d(1.0, 1.0, Rotation2d.fromDegrees(90))
+      );
+      PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+
+      PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0.0, Rotation2d.fromDegrees(-90)));
+
+      path.preventFlipping = true;
+      
+      return new FollowPathCommand(
+        path, 
+        swerveDrive::getPose, 
+        swerveDrive::getRobotVelocity, 
+        this::callingDrive, 
+        new PPHolonomicDriveController(
+          new PIDConstants(5.0, 0.0, 0.0), 
+          new PIDConstants(5.0, 0.0, 0.0)
+        ), 
+        null, 
+        () -> {
+          var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()) {
+            return alliance.get() == DriverStation.Alliance.Red;
+          }
+          return false;
+        }, 
+        this);
+    } catch (Exception e) {
+      System.out.println("Error");
+      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+      return Commands.none();
+    }
   }
 }
 
