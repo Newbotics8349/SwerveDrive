@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -26,39 +27,35 @@ public class AprilTagSubsystem extends SubsystemBase {
     camera = new PhotonCamera(cameraNameString);
   }
 
-  private PhotonTrackedTarget getTagById(int tagId)
-  {
-    for (PhotonTrackedTarget target : tagsTracked)
-    {
-      if (target.getFiducialId() == tagId) 
+  private PhotonTrackedTarget getTagById(int tagId) {
+    for (PhotonTrackedTarget target : tagsTracked) {
+      if (target.getFiducialId() == tagId)
         return target;
     }
     return null;
   }
 
-  public List<PhotonTrackedTarget> getTargets()
-  {
+  public List<PhotonTrackedTarget> getTargets() {
     return tagsTracked;
   }
 
-  public Pose2d getCameraToTagPose(int tagId)
-  {
+  public Pose2d getCameraToTagPose(int tagId) {
     // Get tag object if it exists
     PhotonTrackedTarget target = getTagById(tagId);
-    if (target == null) return null;
+    if (target == null)
+      return null;
 
-    // Get transform from target
-    Transform3d transform3d = target.getBestCameraToTarget();
-    
-    // Create a Pose2d from the Transform3d
-    return new Pose2d(transform3d.getX(), transform3d.getY(), transform3d.getRotation().toRotation2d());
+    return getCameraToTagPose(target);
   }
 
-  public Pose2d getCameraToTagPose(PhotonTrackedTarget target)
-  {
+  public Pose2d getCameraToTagPose(PhotonTrackedTarget target) {
     // Get transform from target
     Transform3d transform3d = target.getBestCameraToTarget();
-    
+
+    // Offset the target transform considering that the camera is not in the center
+    // of the robot
+    transform3d.plus(new Transform3d(Constants.cameraOnRobot));
+
     // Create a Pose2d from the Transform3d
     return new Pose2d(transform3d.getX(), transform3d.getY(), transform3d.getRotation().toRotation2d());
   }
@@ -72,11 +69,9 @@ public class AprilTagSubsystem extends SubsystemBase {
     // Look for new targets
     tagsTracked.clear();
     List<PhotonPipelineResult> results = camera.getAllUnreadResults();
-    if (results.size() > 0)
-    {
+    if (results.size() > 0) {
       PhotonPipelineResult lastResult = results.get(0);
-      for (PhotonTrackedTarget target : lastResult.targets)
-      {
+      for (PhotonTrackedTarget target : lastResult.targets) {
         tagsTracked.add(target);
       }
     }
