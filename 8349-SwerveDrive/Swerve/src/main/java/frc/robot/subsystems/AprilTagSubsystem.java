@@ -5,15 +5,17 @@
 package frc.robot.subsystems;
 
 import java.util.List;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import org.dyn4j.geometry.Transform;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
 
 public class AprilTagSubsystem extends SubsystemBase {
@@ -24,27 +26,41 @@ public class AprilTagSubsystem extends SubsystemBase {
     camera = new PhotonCamera(cameraNameString);
   }
 
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
-  public Command exampleMethodCommand() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
-        () -> {
-          /* one-time action goes here */
-        });
+  private PhotonTrackedTarget getTagById(int tagId)
+  {
+    for (PhotonTrackedTarget target : tagsTracked)
+    {
+      if (target.getFiducialId() == tagId) 
+        return target;
+    }
+    return null;
   }
 
-  public Transform3d getTransform()
+  public List<PhotonTrackedTarget> getTargets()
   {
-    if (!tagsTracked.isEmpty())
-    {
-      return tagsTracked.get(0).getBestCameraToTarget();
-    }
-    return new Transform3d();
+    return tagsTracked;
+  }
+
+  public Pose2d getCameraToTagPose(int tagId)
+  {
+    // Get tag object if it exists
+    PhotonTrackedTarget target = getTagById(tagId);
+    if (target == null) return null;
+
+    // Get transform from target
+    Transform3d transform3d = target.getBestCameraToTarget();
+    
+    // Create a Pose2d from the Transform3d
+    return new Pose2d(transform3d.getX(), transform3d.getY(), transform3d.getRotation().toRotation2d());
+  }
+
+  public Pose2d getCameraToTagPose(PhotonTrackedTarget target)
+  {
+    // Get transform from target
+    Transform3d transform3d = target.getBestCameraToTarget();
+    
+    // Create a Pose2d from the Transform3d
+    return new Pose2d(transform3d.getX(), transform3d.getY(), transform3d.getRotation().toRotation2d());
   }
 
   public boolean hasTargets() {
@@ -68,6 +84,5 @@ public class AprilTagSubsystem extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
   }
 }

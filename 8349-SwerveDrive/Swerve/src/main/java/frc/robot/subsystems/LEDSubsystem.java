@@ -23,11 +23,6 @@ public class LEDSubsystem extends SubsystemBase {
     leds.start();
   }
 
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
   public Command setGlobalColour(int r, int g, int b) {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
@@ -48,12 +43,10 @@ public class LEDSubsystem extends SubsystemBase {
   }
 
   public Command debugMode(AprilTagSubsystem visionSubsystem) {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
     return runOnce(
         () -> {
           // Get first target's transform from vision subsystem
-          Transform3d targetTransform = visionSubsystem.getTransform();
+          Transform3d targetTransform = visionSubsystem.getTargets().get(0).getBestCameraToTarget();
           int r = (int) (targetTransform.getX() * 127 + 127); // Distance outward
           int g = (int) (targetTransform.getY() * 127 + 127); // Right
           int b = (int) (targetTransform.getZ() * 127 + 127); // Up
@@ -74,11 +67,9 @@ public class LEDSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
   }
 
   @Override
   public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
   }
 }
