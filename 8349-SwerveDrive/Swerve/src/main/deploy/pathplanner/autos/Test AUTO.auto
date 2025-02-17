@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Starting Point"
+            "pathName": "Straight Forward"
           }
         },
         {
@@ -19,25 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Second Step"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Reload"
+            "name": "TEST"
           }
         }
       ]
