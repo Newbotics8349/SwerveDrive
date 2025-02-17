@@ -11,7 +11,6 @@ import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 
-import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
@@ -74,10 +73,7 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-    DoubleSupplier dS = () -> 10.0;
-    DoubleSupplier dS2 = () -> 10.0;
-    DoubleSupplier dS3 = () -> 5.0;
-    buttons.button(1).whileTrue(drivebase.driveCommand(dS, dS2, dS3));
+    buttons.button(1).whileTrue(drivebase.followPathCommand());
   }
 
   /**
