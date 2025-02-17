@@ -93,14 +93,10 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     if (joystick.getRawButtonPressed(1)) {
       System.out.println("Joystick 1: Button 1");
-      orangeMotor.set(-0.3);
-      greenMotor.set(0.3);
-    }else if (joystick.getRawButtonPressed(3)) {
-      System.out.println("Joystick 1: Button 3");
-      orangeMotor.set(0.3);
-      greenMotor.set(-0.3);
-    }else if (joystick.getRawButtonPressed(2)) {
-    System.out.println("Joystick 1: Button 2");
+      orangeMotor.set(-0.5);
+      greenMotor.set(0.5);
+    }else if (joystick.getRawButtonReleased(1)) {
+    System.out.println("Joystick 1: Button 1 released");
     orangeMotor.set(0);
     greenMotor.set(0);
     }
