@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
+import edu.wpi.first.math.geometry.Transform3d;
+
 public class LEDSubsystem extends SubsystemBase {
   private AddressableLED leds;
   private int numLeds = 60;
@@ -37,6 +39,31 @@ public class LEDSubsystem extends SubsystemBase {
           // Set all LEDs to a specific color, e.g., red (255, 0, 0)
           for (int i = 0; i < numLeds; i++) {
               ledData.setRGB(i, r, g, b);  // Red
+              // ledData.setRGB(i, (int)(255*(((float)i)/59f)), (int)(255*(1-(((float)i)/59f))), 0);  // Red
+          }
+        
+          // Send the color data to the LEDs
+          leds.setData(ledData);
+        });
+  }
+
+  public Command debugMode(AprilTagSubsystem visionSubsystem) {
+    // Inline construction of command goes here.
+    // Subsystem::RunOnce implicitly requires `this` subsystem.
+    return runOnce(
+        () -> {
+          // Get first target's transform from vision subsystem
+          Transform3d targetTransform = visionSubsystem.getTransform();
+          int r = (int) (targetTransform.getX() * 127 + 127); // Distance outward
+          int g = (int) (targetTransform.getY() * 127 + 127); // Right
+          int b = (int) (targetTransform.getZ() * 127 + 127); // Up
+
+          // Create an array of color data for the LED strip
+          AddressableLEDBuffer ledData = new AddressableLEDBuffer(numLeds);
+        
+          // Set all LEDs to a specific color, e.g., red (255, 0, 0)
+          for (int i = 0; i < numLeds; i++) {
+              ledData.setRGB(i, r, g, b);
               // ledData.setRGB(i, (int)(255*(((float)i)/59f)), (int)(255*(1-(((float)i)/59f))), 0);  // Red
           }
         

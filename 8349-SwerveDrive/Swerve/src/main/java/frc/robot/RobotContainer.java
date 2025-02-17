@@ -53,7 +53,6 @@ public class RobotContainer {
   SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_driverController::getRightX, 
                                                                                             m_driverController::getRightY)
                                                                                             .headingWhile(true);
-  
 
   Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
 
@@ -79,8 +78,9 @@ public class RobotContainer {
 
     // Send a debug message when any targets are seen
     Trigger targetsSeen = new Trigger(vision::hasTargets);
-    targetsSeen.onTrue(leds.setGlobalColour(0,255,0));
-    targetsSeen.onFalse(leds.setGlobalColour(255,0,0));
+    targetsSeen.debounce(0.1);
+    targetsSeen.onTrue(leds.debugMode(vision));
+    // targetsSeen.onFalse(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
 
   }
 

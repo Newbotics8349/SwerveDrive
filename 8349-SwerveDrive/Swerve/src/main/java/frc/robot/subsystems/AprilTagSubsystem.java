@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import org.dyn4j.geometry.Transform;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -35,6 +36,15 @@ public class AprilTagSubsystem extends SubsystemBase {
         () -> {
           /* one-time action goes here */
         });
+  }
+
+  public Transform3d getTransform()
+  {
+    if (!tagsTracked.isEmpty())
+    {
+      return tagsTracked.get(0).getBestCameraToTarget();
+    }
+    return new Transform3d();
   }
 
   public boolean hasTargets() {
