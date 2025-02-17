@@ -4,11 +4,14 @@
 
 package frc.robot.subsystems;
 
+import java.util.List;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+
+import org.dyn4j.geometry.Vector3;
 
 import edu.wpi.first.math.geometry.Transform3d;
 
@@ -23,7 +26,11 @@ public class LEDSubsystem extends SubsystemBase {
     leds.start();
   }
 
-  public Command setGlobalColour(int r, int g, int b) {
+  /**
+   * Set the entire 60 LEDs to a single colour
+   * @color: Vector3 where each component is a value between 0-1
+   */ 
+  public Command setColour(Vector3 color) {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return runOnce(
@@ -33,8 +40,8 @@ public class LEDSubsystem extends SubsystemBase {
         
           // Set all LEDs to a specific color, e.g., red (255, 0, 0)
           for (int i = 0; i < numLeds; i++) {
-              ledData.setRGB(i, r, g, b);  // Red
-              // ledData.setRGB(i, (int)(255*(((float)i)/59f)), (int)(255*(1-(((float)i)/59f))), 0);  // Red
+              ledData.setRGB(i, (int)color.x*255, (int)color.x*255, (int)color.x*255);
+              // ledData.setRGB(i, (int)(255*(((float)i)/59f)), (int)(255*(1-(((float)i)/59f))), 0);
           }
         
           // Send the color data to the LEDs
@@ -42,6 +49,36 @@ public class LEDSubsystem extends SubsystemBase {
         });
   }
 
+  /**
+   * 
+   * @color: List of Vector3s where each vector's components are values between 0-1
+   */ 
+  public Command setColour(List<Vector3> colors) {
+    // Inline construction of command goes here.
+    // Subsystem::RunOnce implicitly requires `this` subsystem.
+    return runOnce(
+        () -> {
+          int ledsPerSection = numLeds / colors.size(); // int division, extra leds will just be off
+
+          // Create an array of color data for the LED strip
+          AddressableLEDBuffer ledData = new AddressableLEDBuffer(numLeds);
+        
+          for (Vector3 color : colors)
+          {
+            // Set all section's leds
+            for (int i = 0; i < ledsPerSection; i++) {
+                ledData.setRGB(i, (int)color.x*255, (int)color.x*255, (int)color.x*255);
+            }
+
+          }
+        
+          // Send the color data to the LEDs
+          leds.setData(ledData);
+        });
+  }
+  
+
+  // Visualizes the first april tag target from the vision system
   public Command debugMode(AprilTagSubsystem visionSubsystem) {
     return runOnce(
         () -> {
