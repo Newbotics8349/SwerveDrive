@@ -6,8 +6,14 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.SerialPort.StopBits;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -20,6 +26,8 @@ public class Robot extends TimedRobot {
   private final RobotContainer m_robotContainer;
   public Joystick joystick = new Joystick(0);
   public Joystick joystick2 = new Joystick(1);
+  public SparkMax orangeMotor = new SparkMax(41, MotorType.kBrushless);
+  public SparkMax greenMotor = new SparkMax(42, MotorType.kBrushless);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -52,23 +60,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {
-    if (joystick.getRawButtonPressed(1)) {
-      System.out.println("Joystick 1: Button 1");
-    }else if (joystick.getRawButtonPressed(3)) {
-      System.out.println("Joystick 1: Button 3");
-    }else if (joystick.getRawButtonPressed(5)) {
-    System.out.println("Joystick 1: Button 5");
-    }
-
-    if (joystick2.getRawButtonPressed(1)) {
-      System.out.println("Joystick 2: Button 1");
-    }else if (joystick2.getRawButtonPressed(3)) {
-      System.out.println("Joystick 2: Button 3");
-    }else if (joystick2.getRawButtonPressed(5)) {
-    System.out.println("Joystick 2: Button 5");
-    }
-  }
+  public void disabledPeriodic() {}
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -98,7 +90,21 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    if (joystick.getRawButtonPressed(1)) {
+      System.out.println("Joystick 1: Button 1");
+      orangeMotor.set(-0.3);
+      greenMotor.set(0.3);
+    }else if (joystick.getRawButtonPressed(3)) {
+      System.out.println("Joystick 1: Button 3");
+      orangeMotor.set(0.3);
+      greenMotor.set(-0.3);
+    }else if (joystick.getRawButtonPressed(2)) {
+    System.out.println("Joystick 1: Button 2");
+    orangeMotor.set(0);
+    greenMotor.set(0);
+    }
+  }
 
   @Override
   public void testInit() {
