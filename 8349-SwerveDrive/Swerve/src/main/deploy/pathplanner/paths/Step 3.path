@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.2969805743243241,
+        "y": 6.952470439189188
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.981457645200193,
+        "y": 6.400018304269903
+      },
+      "isLocked": false,
+      "linkedName": "RELOAD1"
+    },
+    {
+      "anchor": {
+        "x": 3.7871832770270273,
+        "y": 5.6629011824324325
+      },
+      "prevControl": {
+        "x": 1.7864253277289852,
+        "y": 5.512730269700416
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "END2"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -62.571258778322445
+  },
+  "reversed": false,
+  "folder": "Newmarket AUTO",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 124.75591255354131
+  },
+  "useDefaultConstraints": true
+}

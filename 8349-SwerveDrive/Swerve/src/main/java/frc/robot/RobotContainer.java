@@ -7,14 +7,24 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
+
 import frc.robot.subsystems.AprilTagSubsystem;
+
+import frc.robot.subsystems.ClawSubsystem;
+
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
+
+
 import edu.wpi.first.wpilibj2.command.Command;
+
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -28,12 +38,18 @@ public class RobotContainer {
   // Initialize the robot subsystems
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SwerveSubsystem drivebase = new SwerveSubsystem();
+
   private final AprilTagSubsystem vision = new AprilTagSubsystem("cameramain");
   private final LEDSubsystem leds = new LEDSubsystem();
+
+
+  private final ClawSubsystem claw = new ClawSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  
+  CommandGenericHID buttons = new CommandGenericHID(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -76,11 +92,19 @@ public class RobotContainer {
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
 
+
     // Send a debug message when any targets are seen
     Trigger targetsSeen = new Trigger(vision::hasTargets);
     targetsSeen.debounce(0.1);
     targetsSeen.onTrue(leds.debugMode(vision));
     // targetsSeen.onFalse(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
+
+
+    buttons.button(1).whileTrue(drivebase.followPathCommand());
+    buttons.button(2).whileTrue(claw.clawIn());
+    buttons.button(3).whileTrue(claw.clawOut());
+    buttons.button(2).onFalse(claw.clawStop());
+    buttons.button(3).onFalse(claw.clawStop());
 
   }
 

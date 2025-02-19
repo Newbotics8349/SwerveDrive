@@ -4,7 +4,9 @@
 
 package frc.robot;
 
+
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,7 +21,11 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   
   private final RobotContainer m_robotContainer;
-  
+
+  public Joystick joystick = new Joystick(0);
+  public Joystick joystick2 = new Joystick(1);
+
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -51,7 +57,23 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    // if (joystick.getRawButtonPressed(1)) {
+    //   System.out.println("Joystick 1: Button 1");
+    // } else if (joystick.getRawButtonPressed(3)) {
+    //   System.out.println("Joystick 1: Button 3");
+    // } else if (joystick.getRawButtonPressed(5)) {
+    // System.out.println("Joystick 1: Button 5");
+    // }
+
+    // if (joystick2.getRawButtonPressed(1)) {
+    //   System.out.println("Joystick 2: Button 1");
+    // } else if (joystick2.getRawButtonPressed(3)) {
+    //   System.out.println("Joystick 2: Button 3");
+    // } else if (joystick2.getRawButtonPressed(5)) {
+    // System.out.println("Joystick 2: Button 5");
+    // }
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
