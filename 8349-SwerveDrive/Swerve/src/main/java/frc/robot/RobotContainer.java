@@ -11,7 +11,7 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.AprilTagSubsystem;
 
 import frc.robot.subsystems.ClawSubsystem;
-
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -38,6 +38,7 @@ public class RobotContainer {
   // Initialize the robot subsystems
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SwerveSubsystem drivebase = new SwerveSubsystem();
+  private final ElevatorSubsystem elevator = new ElevatorSubsystem();
 
   private final AprilTagSubsystem vision = new AprilTagSubsystem("cameramain");
   private final LEDSubsystem leds = new LEDSubsystem();
@@ -105,7 +106,8 @@ public class RobotContainer {
     buttons.button(3).whileTrue(claw.clawOut());
     buttons.button(2).onFalse(claw.clawStop());
     buttons.button(3).onFalse(claw.clawStop());
-
+    buttons.button(4).whileTrue(elevator.level1());
+    buttons.button(4).onFalse(elevator.stop());
   }
 
   /**
