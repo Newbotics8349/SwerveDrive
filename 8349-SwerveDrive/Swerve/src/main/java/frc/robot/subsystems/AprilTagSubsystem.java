@@ -39,6 +39,20 @@ public class AprilTagSubsystem extends SubsystemBase {
     return tagsTracked;
   }
 
+  public PhotonTrackedTarget getBestTarget(List<PhotonTrackedTarget> targetList) {
+    PhotonTrackedTarget bestTarget = null;
+    for (PhotonTrackedTarget target : targetList) {
+      if (bestTarget == null) {
+        bestTarget = target;
+      } else {
+        if (Math.abs(bestTarget.getYaw() - 180) > Math.abs(target.getYaw())) {
+          bestTarget = target;
+        }
+      }
+    } 
+    return bestTarget;
+  }
+
   public Pose2d getCameraToTagPose(int tagId) {
     // Get tag object if it exists
     PhotonTrackedTarget target = getTagById(tagId);

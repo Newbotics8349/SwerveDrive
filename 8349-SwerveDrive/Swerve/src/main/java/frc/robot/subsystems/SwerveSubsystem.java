@@ -42,7 +42,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class SwerveSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
 
-
+  private final AprilTagSubsystem cameraFunctions = new AprilTagSubsystem("cam1");
   File directory = new File(Filesystem.getDeployDirectory(),"swerve");
   SwerveDrive  swerveDrive;
 
@@ -117,12 +117,11 @@ public class SwerveSubsystem extends SubsystemBase {
     try {
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
         new Pose2d(1.0, 1.0, Rotation2d.fromDegrees(0)),
-        new Pose2d(3.0, 1.0, Rotation2d.fromDegrees(0)),
-        new Pose2d(5.0, 3.0, Rotation2d.fromDegrees(90))
+        cameraFunctions.getCameraToTagPose(cameraFunctions.getBestTarget(cameraFunctions.getTargets()))
       );
       PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
 
-      PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0.0, Rotation2d.fromDegrees(-90)));
+      PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0.0, cameraFunctions.getCameraToTagPose(cameraFunctions.getBestTarget(cameraFunctions.getTargets())).getRotation()));
 
       path.preventFlipping = true;
       ModuleConfig mConfig = new ModuleConfig(0.048, 5.450, 1.2, DCMotor.getNEO(4), 5.143, 40, 4);
