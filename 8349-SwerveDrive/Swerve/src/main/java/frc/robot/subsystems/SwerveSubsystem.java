@@ -41,7 +41,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class SwerveSubsystem extends SubsystemBase {
     /** Creates a new ExampleSubsystem. */
 
-  private final AprilTagSubsystem cameraFunctions = new AprilTagSubsystem("cam1");    File directory = new File(Filesystem.getDeployDirectory(), "swerve");
+  File directory = new File(Filesystem.getDeployDirectory(), "swerve");
     SwerveDrive swerveDrive;
 
     // Objects for path planning commands
@@ -57,6 +57,7 @@ public class SwerveSubsystem extends SubsystemBase {
                                                                              Rotation2d.fromDegrees(0)));
       // Alternative method if you don't want to supply the conversion factor via JSON files.
       // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
+      robotConfig = RobotConfig.fromGUISettings();
     } catch (Exception e)
     {
       throw new RuntimeException(e);
@@ -115,17 +116,16 @@ public class SwerveSubsystem extends SubsystemBase {
   public void callingDrive(ChassisSpeeds chassisSpeeds, DriveFeedforwards driveFeedforwards) {
     swerveDrive.drive(chassisSpeeds);
   }
-  public Command followPathCommand()
+  public Command followPathCommand(AprilTagSubsystem cameraFunctions)
   {
     try {
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-        new Pose2d(1.0, 1.0, Rotation2d.fromDegrees(0)),
-        new Pose2d(3.0, 1.0, Rotation2d.fromDegrees(0)),
-        new Pose2d(5.0, 3.0, Rotation2d.fromDegrees(90))
+        new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)),
+        cameraFunctions.getCameraToTagPose(cameraFunctions.getTargets().get(0))
       );
       PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
 
-      PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0.0, Rotation2d.fromDegrees(-90)));
+      PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0.0, cameraFunctions.getCameraToTagPose(cameraFunctions.getTargets().get(0)).getRotation()));
 
             path.preventFlipping = true;
 

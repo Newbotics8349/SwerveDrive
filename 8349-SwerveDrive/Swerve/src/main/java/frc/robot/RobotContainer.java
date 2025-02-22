@@ -110,7 +110,7 @@ public class RobotContainer {
         targetsSeen.onTrue(leds.debugMode(vision));
         // targetsSeen.onFalse(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
 
-        buttons.button(1).whileTrue(drivebase.followPathCommand());
+        buttons.button(1).whileTrue(drivebase.followPathCommand(vision));
 
         // * Controlling the claw moving in / out
         // Claw in supercedes claw out
