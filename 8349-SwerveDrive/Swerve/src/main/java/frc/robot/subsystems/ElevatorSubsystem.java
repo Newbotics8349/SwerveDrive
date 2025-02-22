@@ -7,54 +7,74 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import com.ctre.phoenix.motorcontrol.GroupMotorControllers;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
-
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 
 public class ElevatorSubsystem extends SubsystemBase {
-  /** Creates a new ElevatorSubsystem. */
+  // * Components controlling elevator height
   DigitalInput limitSwitch = new DigitalInput(2);
-  Encoder elevatorEncoder = new Encoder(0,1);
+  Encoder elevatorEncoder = new Encoder(0, 1);
   SparkMax leftMotor = new SparkMax(31, MotorType.kBrushless);
   SparkMax rightMotor = new SparkMax(32, MotorType.kBrushless);
+
+  // * Constants for moving elevator to required heights
+  private final double ticksPerInch = (1.0 / 256.0);
+  // Heights are relative to the end-effector at it's zero position
+  private final double levelHeights[] = { 10, 15, 20, 25 };
+  // PID values
+  private final float kP = 1;
+  private final float kI = 0;
+  private final float kD = 0;
+  PIDController pidController = new PIDController(kP, kI, kD);
+
   public ElevatorSubsystem() {
-    while (!limitSwitch.get()) {
-      leftMotor.set(-0.01);
-      rightMotor.set(0.01);
-    }
-    elevatorEncoder.reset();    
-    elevatorEncoder.setDistancePerPulse(1.0/256.0);
+    // Set the conversion factor so meaningful distance values are available
+    elevatorEncoder.setDistancePerPulse(ticksPerInch);
   }
 
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
-  public Command level1() {
+  public Command goToLevel(int level) {
+    // Check for valid args
+    if (level < 1 || level > levelHeights.length)
+      return run(() -> {
+      });
+
+    // Determine associated height needed to be travelled to
+    double targetHeight = levelHeights[level];
+
     return run(
         () -> {
-          if(elevatorEncoder.getDistance() < 1) {
-            leftMotor.set(0.01);
-            rightMotor.set(-0.01);
-          } else {
-            leftMotor.set(0);
-            rightMotor.set(0);
-          }
-        }
-    );
+          double motorSpeed = pidController.calculate(elevatorEncoder.getDistance(), targetHeight);
+          leftMotor.set(motorSpeed);
+          rightMotor.set(motorSpeed);
+        });
   }
+
   public Command stop() {
     return runOnce(
         () -> {
           leftMotor.set(0);
           rightMotor.set(0);
-        }
-    );
+        });
   }
+
+  // For driving with an axis for debug
+  public Command setElevatorSpeed(double speed) {
+    // Scale the speed from the controller axis
+    double mSpeed = new SlewRateLimiter(10).calculate(speed * 0.5);
+
+    return runOnce(
+        () -> {
+          leftMotor.set(mSpeed);
+          rightMotor.set(mSpeed);
+        });
+  }
+
   public Command reset() {
     return run(
         () -> {
@@ -62,31 +82,19 @@ public class ElevatorSubsystem extends SubsystemBase {
             leftMotor.set(-0.01);
             rightMotor.set(0.01);
           }
-        }      
-    );
-  }
-  public Command exampleMethodCommand() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
-        () -> {
-          /* one-time action goes here */
         });
   }
 
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
+  // Limit switch condition
+  public boolean atZero() {
+    return limitSwitch.get();
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    // Reset the encoder if the limit switch is triggered
+    if (atZero())
+      elevatorEncoder.reset();
   }
 
   @Override

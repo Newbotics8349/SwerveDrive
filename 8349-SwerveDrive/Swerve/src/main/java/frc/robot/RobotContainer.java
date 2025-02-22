@@ -11,7 +11,7 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.AprilTagSubsystem;
 
 import frc.robot.subsystems.ClawSubsystem;
-
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -48,6 +48,7 @@ public class RobotContainer {
     private final AprilTagSubsystem vision = new AprilTagSubsystem("cameramain");
     private final LEDSubsystem leds = new LEDSubsystem();
 
+    private final ElevatorSubsystem elevator = new ElevatorSubsystem();
     private final ClawSubsystem claw = new ClawSubsystem();
 
     // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -87,6 +88,7 @@ public class RobotContainer {
         // * Configure the trigger bindings
         configureBindings();
         drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
+        elevator.setDefaultCommand(elevator.setElevatorSpeed(m_driverController.getLeftY()));
     }
 
     /**
