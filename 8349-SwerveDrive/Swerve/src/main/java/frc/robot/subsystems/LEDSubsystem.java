@@ -17,11 +17,10 @@ import edu.wpi.first.math.geometry.Transform3d;
 
 public class LEDSubsystem extends SubsystemBase {
   private AddressableLED leds;
-  private int numLeds = 60;
+  final private int numLeds = 60;
   
-  /** Creates a new ExampleSubsystem. */
   public LEDSubsystem() {
-    leds = new AddressableLED(0);
+    leds = new AddressableLED(0); // PWM port
     leds.setLength(numLeds);
     leds.start();
   }

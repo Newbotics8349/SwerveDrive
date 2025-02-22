@@ -11,15 +11,17 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.AprilTagSubsystem;
 
 import frc.robot.subsystems.ClawSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem;
+
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
-
-
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 
@@ -27,94 +29,115 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // Initialize the robot subsystems
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-  private final SwerveSubsystem drivebase = new SwerveSubsystem();
-  private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+    // * Define objects for autonomous routine selection
+    private final SendableChooser<String> autoSelector = new SendableChooser<>();
+    // Auto selection strings
+    private static final String newmarketAuto = "Newmarket Auto";
 
-  private final AprilTagSubsystem vision = new AprilTagSubsystem("cameramain");
-  private final LEDSubsystem leds = new LEDSubsystem();
+    // * Initialize the robot subsystems
+    private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+    private final SwerveSubsystem drivebase = new SwerveSubsystem();
 
+    private final AprilTagSubsystem vision = new AprilTagSubsystem("cameramain");
+    private final LEDSubsystem leds = new LEDSubsystem();
 
-  private final ClawSubsystem claw = new ClawSubsystem();
+    private final ClawSubsystem claw = new ClawSubsystem();
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
-  
-  CommandGenericHID buttons = new CommandGenericHID(0);
+    // Replace with CommandPS4Controller or CommandJoystick if needed
+    private final CommandXboxController m_driverController = new CommandXboxController(
+            OperatorConstants.kDriverControllerPort);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    // Configure the trigger bindings
-    configureBindings();
-    drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
-  }
+    CommandGenericHID buttons = new CommandGenericHID(0);
 
-  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                () -> m_driverController.getLeftY() * -1,
-                                                                () -> m_driverController.getLeftX() * -1)
-                                                                .withControllerRotationAxis(m_driverController::getRightX)
-                                                                .deadband(OperatorConstants.DEADBAND)
-                                                                .scaleTranslation(0.8)
-                                                                .allianceRelativeControl(true);
+    /**
+     * The container for the robot. Contains subsystems, IO devices, and commands.
+     */
+    public RobotContainer() {
 
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_driverController::getRightX, 
-                                                                                            m_driverController::getRightY)
-                                                                                            .headingWhile(true);
+        // * Set up autonomous routine selection
+        // Populate autonomous routine selection with available routines
+        autoSelector.setDefaultOption(newmarketAuto, newmarketAuto);
+        // Make autonomous routine selector available on the smart dashboard
+        SmartDashboard.putData("Auto choices", autoSelector);
 
-  Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
+        // * Configure sticks to drive the robot in TeleOp
+        SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
+                () -> m_driverController.getLeftY() * -1,
+                () -> m_driverController.getLeftX() * -1)
+                .withControllerRotationAxis(m_driverController::getRightX)
+                .deadband(OperatorConstants.DEADBAND)
+                .scaleTranslation(0.8)
+                .allianceRelativeControl(true);
 
-  Command driveFieldOrientedAngularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-  
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
-  private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
+        SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
+                .withControllerHeadingAxis(m_driverController::getRightX,
+                        m_driverController::getRightY)
+                .headingWhile(true);
 
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+        Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
+        Command driveFieldOrientedAngularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
 
+        // * Configure the trigger bindings
+        configureBindings();
+        drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
+    }
 
-    // Send a debug message when any targets are seen
-    Trigger targetsSeen = new Trigger(vision::hasTargets);
-    targetsSeen.debounce(0.1);
-    targetsSeen.onTrue(leds.debugMode(vision));
-    // targetsSeen.onFalse(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
+    /**
+     * Use this method to define your trigger->command mappings. Triggers can be
+     * created via the
+     * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
+     * an arbitrary
+     * predicate, or via the named factories in {@link
+     * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
+     * {@link
+     * CommandXboxController
+     * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+     * PS4} controllers or
+     * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
+     * joysticks}.
+     */
+    private void configureBindings() {
+        // * Send a debug message when any targets are seen
+        Trigger targetsSeen = new Trigger(vision::hasTargets);
+        targetsSeen.debounce(0.1);
+        targetsSeen.onTrue(leds.debugMode(vision));
+        // targetsSeen.onFalse(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
 
+        buttons.button(1).whileTrue(drivebase.followPathCommand());
 
-    buttons.button(1).whileTrue(drivebase.followPathCommand());
-    buttons.button(2).whileTrue(claw.clawIn());
-    buttons.button(3).whileTrue(claw.clawOut());
-    buttons.button(2).onFalse(claw.clawStop());
-    buttons.button(3).onFalse(claw.clawStop());
-    buttons.button(4).whileTrue(elevator.level1());
-    buttons.button(4).onFalse(elevator.stop());
-  }
+        // * Controlling the claw moving in / out
+        // Claw in supercedes claw out
+        buttons.button(2).whileTrue(claw.clawIn()).onFalse(claw.clawStop());
+        buttons.button(3).and(buttons.button(2).negate()).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
-  }
+        // * Controlling the elevator
+        
+    }
+
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        // Get name of routine to run from the selector
+        String selectedAutoName = autoSelector.getSelected();
+
+        // Return the associated command from the Autos class
+        switch (selectedAutoName) {
+            case newmarketAuto:
+                return Autos.newmarketAuto(drivebase);
+            default:
+                return Autos.autoNotFound();
+        }
+    }
 }
