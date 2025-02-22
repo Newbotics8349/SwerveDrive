@@ -45,7 +45,7 @@ public class AprilTagSubsystem extends SubsystemBase {
       if (bestTarget == null) {
         bestTarget = target;
       } else {
-        if (Math.abs(bestTarget.getYaw() - 180) > Math.abs(target.getYaw())) {
+        if (Math.abs(bestTarget.getYaw()) > Math.abs(target.getYaw())) {
           bestTarget = target;
         }
       }

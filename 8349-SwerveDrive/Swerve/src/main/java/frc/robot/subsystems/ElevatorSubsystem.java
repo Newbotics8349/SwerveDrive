@@ -17,11 +17,11 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 public class ElevatorSubsystem extends SubsystemBase {
   /** Creates a new ElevatorSubsystem. */
-  DutyCycleEncoder elevatorEncoder = new DutyCycleEncoder(0);
+  Encoder elevatorEncoder = new Encoder(0,1);
   SparkMax leftMotor = new SparkMax(31, MotorType.kBrushless);
   SparkMax rightMotor = new SparkMax(32, MotorType.kBrushless);
   public ElevatorSubsystem() {
-    
+    elevatorEncoder.setDistancePerPulse(1.0/256.0);    
   }
 
   /**
@@ -32,9 +32,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   public Command level1() {
     return run(
         () -> {
-          while (elevatorEncoder.get() > 1) {
-            leftMotor.set(-0.01);
-            rightMotor.set(0.01);
+          if(elevatorEncoder.getDistance() < 1) {
+            leftMotor.set(0.01);
+            rightMotor.set(-0.01);
+          } else {
+            leftMotor.set(0);
+            rightMotor.set(0);
           }
         }
     );
