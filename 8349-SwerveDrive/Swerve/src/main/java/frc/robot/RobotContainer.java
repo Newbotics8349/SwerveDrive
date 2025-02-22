@@ -20,8 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
+import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 
@@ -39,12 +38,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
     // * Define objects for autonomous routine selection
-    private final SendableChooser<String> autoSelector = new SendableChooser<>();
+    private final SendableChooser<Command> autoSelector = AutoBuilder.buildAutoChooser();
     // Auto selection strings
     private static final String newmarketAuto = "Newmarket Auto";
 
     // * Initialize the robot subsystems
-    private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
     private final SwerveSubsystem drivebase = new SwerveSubsystem();
 
     private final AprilTagSubsystem vision = new AprilTagSubsystem("cameramain");
@@ -63,11 +61,11 @@ public class RobotContainer {
      */
     public RobotContainer() {
 
-        // * Set up autonomous routine selection
-        // Populate autonomous routine selection with available routines
-        autoSelector.setDefaultOption(newmarketAuto, newmarketAuto);
-        // Make autonomous routine selector available on the smart dashboard
-        SmartDashboard.putData("Auto choices", autoSelector);
+        // // * Set up autonomous routine selection
+        // // Populate autonomous routine selection with available routines
+        // autoSelector.setDefaultOption(newmarketAuto, AutoBuilder.buildAuto(newmarketAuto));
+        // // Make autonomous routine selector available on the smart dashboard
+        // SmartDashboard.putData("Auto choices", autoSelector);
 
         // * Configure sticks to drive the robot in TeleOp
         SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
@@ -129,15 +127,16 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        // Get name of routine to run from the selector
-        String selectedAutoName = autoSelector.getSelected();
+        return autoSelector.getSelected();
+        // // Get name of routine to run from the selector
+        // String selectedAutoName = autoSelector.getSelected();
 
-        // Return the associated command from the Autos class
-        switch (selectedAutoName) {
-            case newmarketAuto:
-                return Autos.newmarketAuto(drivebase);
-            default:
-                return Autos.autoNotFound();
-        }
+        // // Return the associated command from the Autos class
+        // switch (selectedAutoName) {
+        //     case newmarketAuto:
+        //         return Autos.newmarketAuto(drivebase);
+        //     default:
+        //         return Autos.autoNotFound();
+        // }
     }
 }
