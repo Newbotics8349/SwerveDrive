@@ -21,11 +21,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   SparkMax leftMotor = new SparkMax(31, MotorType.kBrushless);
   SparkMax rightMotor = new SparkMax(32, MotorType.kBrushless);
   public ElevatorSubsystem() {
-    elevatorEncoder.setDistancePerPulse(1.0/256.0);
     while (!limitSwitch.get()) {
       leftMotor.set(-0.01);
       rightMotor.set(0.01);
-    }    
+    }
+    elevatorEncoder.reset();    
+    elevatorEncoder.setDistancePerPulse(1.0/256.0);
   }
 
   /**
