@@ -10,18 +10,22 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 
 public class ElevatorSubsystem extends SubsystemBase {
   /** Creates a new ElevatorSubsystem. */
+  DigitalInput limitSwitch = new DigitalInput(2);
   Encoder elevatorEncoder = new Encoder(0,1);
   SparkMax leftMotor = new SparkMax(31, MotorType.kBrushless);
   SparkMax rightMotor = new SparkMax(32, MotorType.kBrushless);
   public ElevatorSubsystem() {
-    elevatorEncoder.setDistancePerPulse(1.0/256.0);    
+    elevatorEncoder.setDistancePerPulse(1.0/256.0);
+    while (!limitSwitch.get()) {
+      leftMotor.set(-0.01);
+      rightMotor.set(0.01);
+    }    
   }
 
   /**
@@ -48,6 +52,16 @@ public class ElevatorSubsystem extends SubsystemBase {
           leftMotor.set(0);
           rightMotor.set(0);
         }
+    );
+  }
+  public Command reset() {
+    return run(
+        () -> {
+          if (!limitSwitch.get()) {
+            leftMotor.set(-0.01);
+            rightMotor.set(0.01);
+          }
+        }      
     );
   }
   public Command exampleMethodCommand() {
