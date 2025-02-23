@@ -1,0 +1,12 @@
+<xml version="1.0">
+<dashboard>
+</dashboard>
+<live-window>
+</live-window>
+	<hidden field="IMU"/>
+	<hidden field="Field"/>
+	<hidden field="Swerve Drive"/>
+	<hidden field="Motors"/>
+	<hidden field="JSON"/>
+	<hidden field="Encoders"/>
+</xml>
