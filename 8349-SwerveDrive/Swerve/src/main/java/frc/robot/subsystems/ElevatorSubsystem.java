@@ -7,21 +7,24 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix.motorcontrol.GroupMotorControllers;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 
 public class ElevatorSubsystem extends SubsystemBase {
   // * Components controlling elevator height
   DigitalInput limitSwitch = new DigitalInput(2);
-  Encoder elevatorEncoder = new Encoder(0, 1);
-  SparkMax leftMotor = new SparkMax(31, MotorType.kBrushless);
-  SparkMax rightMotor = new SparkMax(32, MotorType.kBrushless);
+  Encoder elevatorEncoder = new Encoder(0, 1, false, EncodingType.k4X);
+  SparkMax leftMotor = new SparkMax(51, MotorType.kBrushless);
+  SparkMax rightMotor = new SparkMax(52, MotorType.kBrushless);
 
   // * Constants for moving elevator to required heights
   private final double ticksPerInch = (1.0 / 256.0);
@@ -64,13 +67,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   // For driving with an axis for debug
-  public Command setElevatorSpeed(double speed) {
+  public Command setElevatorSpeed(DoubleSupplier speedFunc) {
     // Scale the speed from the controller axis
-    double mSpeed = new SlewRateLimiter(10).calculate(speed * 0.5);
-
-    return runOnce(
-        () -> {
-          leftMotor.set(mSpeed);
+    // double mSpeed = new SlewRateLimiter(10).calculate(speed * 0.5);
+    return run(
+      () -> {
+        double mSpeed = speedFunc.getAsDouble();
+        leftMotor.set(mSpeed);
           rightMotor.set(mSpeed);
         });
   }
@@ -92,9 +95,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // TODO: Uncomment when limit switch is installed 
     // Reset the encoder if the limit switch is triggered
-    if (atZero())
-      elevatorEncoder.reset();
+    // if (atZero())
+      // elevatorEncoder.reset();
+      // leftMotor.set(0);
+      // rightMotor.set(0);
+
+    double encoderVal = elevatorEncoder.getDistance();
+    // System.out.println(encoderVal);
   }
 
   @Override

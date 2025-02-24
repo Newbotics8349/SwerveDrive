@@ -37,10 +37,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-    // * Define objects for autonomous routine selection
-    private final SendableChooser<Command> autoSelector = AutoBuilder.buildAutoChooser();
-    // Auto selection strings
-    private static final String newmarketAuto = "Newmarket Auto";
 
     // * Initialize the robot subsystems
     private final SwerveSubsystem drivebase = new SwerveSubsystem();
@@ -57,6 +53,11 @@ public class RobotContainer {
 
     CommandGenericHID buttons = new CommandGenericHID(0);
 
+    // * Define objects for autonomous routine selection
+    // private final SendableChooser<Command> autoSelector = AutoBuilder.buildAutoChooser();
+    // Auto selection strings
+    private static final String newmarketAuto = "Newmarket Auto";
+
     /**
      * The container for the robot. Contains subsystems, IO devices, and commands.
      */
@@ -64,7 +65,8 @@ public class RobotContainer {
 
         // // * Set up autonomous routine selection
         // // Populate autonomous routine selection with available routines
-        // autoSelector.setDefaultOption(newmarketAuto, AutoBuilder.buildAuto(newmarketAuto));
+        // autoSelector.setDefaultOption(newmarketAuto,
+        // AutoBuilder.buildAuto(newmarketAuto));
         // // Make autonomous routine selector available on the smart dashboard
         // SmartDashboard.putData("Auto choices", autoSelector);
 
@@ -88,7 +90,7 @@ public class RobotContainer {
         // * Configure the trigger bindings
         configureBindings();
         drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
-        elevator.setDefaultCommand(elevator.setElevatorSpeed(m_driverController.getLeftY()));
+        elevator.setDefaultCommand(elevator.setElevatorSpeed(m_driverController::getRightY));
     }
 
     /**
@@ -117,10 +119,11 @@ public class RobotContainer {
         // * Controlling the claw moving in / out
         // Claw in supercedes claw out
         buttons.button(2).whileTrue(claw.clawIn()).onFalse(claw.clawStop());
-        buttons.button(3).and(buttons.button(2).negate()).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
+        buttons.button(3).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
+        // buttons.button(3).and(buttons.button(2).negate()).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
 
         // * Controlling the elevator
-        
+
     }
 
     /**
@@ -129,16 +132,17 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return autoSelector.getSelected();
+        return null;
+        // return autoSelector.getSelected();
         // // Get name of routine to run from the selector
         // String selectedAutoName = autoSelector.getSelected();
 
         // // Return the associated command from the Autos class
         // switch (selectedAutoName) {
-        //     case newmarketAuto:
-        //         return Autos.newmarketAuto(drivebase);
-        //     default:
-        //         return Autos.autoNotFound();
+        // case newmarketAuto:
+        // return Autos.newmarketAuto(drivebase);
+        // default:
+        // return Autos.autoNotFound();
         // }
     }
 }
