@@ -11,7 +11,7 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.AprilTagSubsystem;
 
 import frc.robot.subsystems.ClawSubsystem;
-
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -37,10 +37,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-    // * Define objects for autonomous routine selection
-    private final SendableChooser<Command> autoSelector = AutoBuilder.buildAutoChooser();
-    // Auto selection strings
-    private static final String newmarketAuto = "Newmarket Auto";
 
     // * Initialize the robot subsystems
     private final SwerveSubsystem drivebase = new SwerveSubsystem();
@@ -48,6 +44,7 @@ public class RobotContainer {
     private final AprilTagSubsystem vision = new AprilTagSubsystem("cameramain");
     private final LEDSubsystem leds = new LEDSubsystem();
 
+    private final ElevatorSubsystem elevator = new ElevatorSubsystem();
     private final ClawSubsystem claw = new ClawSubsystem();
 
     // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -56,6 +53,11 @@ public class RobotContainer {
 
     CommandGenericHID buttons = new CommandGenericHID(0);
 
+    // * Define objects for autonomous routine selection
+    // private final SendableChooser<Command> autoSelector = AutoBuilder.buildAutoChooser();
+    // Auto selection strings
+    private static final String newmarketAuto = "Newmarket Auto";
+
     /**
      * The container for the robot. Contains subsystems, IO devices, and commands.
      */
@@ -63,7 +65,8 @@ public class RobotContainer {
 
         // // * Set up autonomous routine selection
         // // Populate autonomous routine selection with available routines
-        // autoSelector.setDefaultOption(newmarketAuto, AutoBuilder.buildAuto(newmarketAuto));
+        // autoSelector.setDefaultOption(newmarketAuto,
+        // AutoBuilder.buildAuto(newmarketAuto));
         // // Make autonomous routine selector available on the smart dashboard
         // SmartDashboard.putData("Auto choices", autoSelector);
 
@@ -87,6 +90,7 @@ public class RobotContainer {
         // * Configure the trigger bindings
         configureBindings();
         drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
+        elevator.setDefaultCommand(elevator.setElevatorSpeed(m_driverController::getRightY));
     }
 
     /**
@@ -106,6 +110,7 @@ public class RobotContainer {
     private void configureBindings() {
         // * Send a debug message when any targets are seen
         Trigger targetsSeen = new Trigger(vision::hasTargets);
+        Trigger cancelElevator = buttons.button(10);
         targetsSeen.debounce(0.1);
         targetsSeen.onTrue(leds.debugMode(vision));
         // targetsSeen.onFalse(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
@@ -115,10 +120,15 @@ public class RobotContainer {
         // * Controlling the claw moving in / out
         // Claw in supercedes claw out
         buttons.button(2).whileTrue(claw.clawIn()).onFalse(claw.clawStop());
-        buttons.button(3).and(buttons.button(2).negate()).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
+        buttons.button(3).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
+        // buttons.button(3).and(buttons.button(2).negate()).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
 
         // * Controlling the elevator
-        
+        buttons.button(4).whileTrue(elevator.reset());
+        buttons.button(5).onTrue(elevator.goToLevel(1));
+        buttons.button(6).onTrue(elevator.goToLevel(2));
+        buttons.button(7).onTrue(elevator.goToLevel(3));
+        buttons.button(8).onTrue(elevator.goToLevel(4));
     }
 
     /**
@@ -127,16 +137,17 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return autoSelector.getSelected();
+        return null;
+        // return autoSelector.getSelected();
         // // Get name of routine to run from the selector
         // String selectedAutoName = autoSelector.getSelected();
 
         // // Return the associated command from the Autos class
         // switch (selectedAutoName) {
-        //     case newmarketAuto:
-        //         return Autos.newmarketAuto(drivebase);
-        //     default:
-        //         return Autos.autoNotFound();
+        // case newmarketAuto:
+        // return Autos.newmarketAuto(drivebase);
+        // default:
+        // return Autos.autoNotFound();
         // }
     }
 }
