@@ -123,7 +123,12 @@ public class RobotContainer {
         // buttons.button(3).and(buttons.button(2).negate()).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
 
         // * Controlling the elevator
-
+        buttons.button(4).onTrue(elevator.goToLevel(0));
+        buttons.button(5).onTrue(elevator.goToLevel(1));
+        buttons.button(6).onTrue(elevator.goToLevel(2));
+        buttons.button(7).onTrue(elevator.goToLevel(3));
+        buttons.button(8).onTrue(elevator.goToLevel(4));
+        buttons.button(9).whileTrue(elevator.zero());
     }
 
     /**

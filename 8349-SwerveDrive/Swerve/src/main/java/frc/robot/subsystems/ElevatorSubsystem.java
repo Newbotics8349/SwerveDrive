@@ -29,7 +29,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   // * Constants for moving elevator to required heights
   private final double ticksPerInch = (1.0 / 256.0);
   // Heights are relative to the end-effector at it's zero position
-  private final double levelHeights[] = { 10, 15, 20, 25 };
+  private final double levelHeights[] = { 0, 10, 15, 20, 25 };
   // PID values
   private final float kP = 1;
   private final float kI = 0;
@@ -43,18 +43,25 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public Command goToLevel(int level) {
     // Check for valid args
-    if (level < 1 || level > levelHeights.length)
+    if (level < 0 || level > levelHeights.length)
       return run(() -> {
       });
 
     // Determine associated height needed to be travelled to
     double targetHeight = levelHeights[level];
 
-    return run(
+    return runOnce(
         () -> {
-          double motorSpeed = pidController.calculate(elevatorEncoder.getDistance(), targetHeight);
-          leftMotor.set(motorSpeed);
-          rightMotor.set(motorSpeed);
+          boolean up = true;
+          if (elevatorEncoder.getDistance() < targetHeight) {
+            up = false;
+          }
+          while (                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               up && elevatorEncoder.getDistance() > targetHeight || !up && elevatorEncoder.getDistance() < targetHeight) {
+            System.out.println(elevatorEncoder.getDistance()); 
+            double motorSpeed = pidController.calculate(elevatorEncoder.getDistance(), targetHeight);
+            leftMotor.set(-motorSpeed);
+            rightMotor.set(-motorSpeed);
+          }
         });
   }
 
@@ -76,6 +83,16 @@ public class ElevatorSubsystem extends SubsystemBase {
         leftMotor.set(mSpeed);
           rightMotor.set(mSpeed);
         });
+  }
+
+  public Command zero() {
+    return runOnce(
+        () -> {
+          System.out.println(elevatorEncoder.getDistance());
+          elevatorEncoder.reset();
+          System.out.println(elevatorEncoder.getDistance());
+        }
+    );
   }
 
   public Command reset() {
