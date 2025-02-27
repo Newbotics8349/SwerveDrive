@@ -11,6 +11,7 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.AprilTagSubsystem;
 
 import frc.robot.subsystems.ClawSubsystem;
+import frc.robot.subsystems.CageSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
@@ -46,6 +47,7 @@ public class RobotContainer {
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
     private final ClawSubsystem claw = new ClawSubsystem();
+    private final CageSubsystem cage = new CageSubsystem();
 
     // Replace with CommandPS4Controller or CommandJoystick if needed
     private final CommandXboxController m_driverController = new CommandXboxController(
@@ -132,6 +134,9 @@ public class RobotContainer {
         buttons.button(6).onTrue(elevator.goToLevel(2));
         buttons.button(7).onTrue(elevator.goToLevel(3));
         buttons.button(8).onTrue(elevator.goToLevel(4));
+
+        //controlling the cage arm
+        buttons.button(10).onTrue(cage.raiseCage());
     }
 
     /**
