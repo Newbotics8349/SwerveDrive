@@ -7,6 +7,10 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -15,7 +19,8 @@ public class ClawSubsystem extends SubsystemBase {
   public ClawSubsystem() {}
   SparkMax orangeMotor = new SparkMax(41, MotorType.kBrushless);
   SparkMax greenMotor = new SparkMax(42, MotorType.kBrushless);
-
+  SparkMax elbowMotor = new SparkMax(61, MotorType.kBrushless);
+  DutyCycleEncoder encoder = new DutyCycleEncoder(0, 4.0, 2.0);
   /**
    * Example command factory method.
    *
@@ -50,6 +55,29 @@ public class ClawSubsystem extends SubsystemBase {
       greenMotor.set(0);
     });
   }
+
+  public Command clawElbowRotateUp(){
+    return run(() -> {
+      if(encoder.get() < 3.5){
+        elbowMotor.set(0.2);
+      }else{
+        elbowMotor.set(0);
+      }
+    });
+  }
+
+  public Command clawElbowRotateDown(){
+    return run(() -> {
+      elbowMotor.set(-0.2);
+    });
+  }
+
+  public Command clawElbowRotateStop(){
+    return run(() -> {
+      elbowMotor.set(0);
+    });
+  }
+
   /**
    * An example method querying a boolean state of the subsystem (for example, a digital sensor).
    *
