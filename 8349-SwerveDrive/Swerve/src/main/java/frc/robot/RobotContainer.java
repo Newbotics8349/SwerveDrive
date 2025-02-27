@@ -110,7 +110,6 @@ public class RobotContainer {
     private void configureBindings() {
         // * Send a debug message when any targets are seen
         Trigger targetsSeen = new Trigger(vision::hasTargets);
-        Trigger cancelElevator = buttons.button(10);
         targetsSeen.debounce(0.1);
         targetsSeen.onTrue(leds.debugMode(vision));
         // targetsSeen.onFalse(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
@@ -124,14 +123,15 @@ public class RobotContainer {
         // buttons.button(3).and(buttons.button(2).negate()).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
 
         //Controlling the arm of the claw
+        buttons.button(9).onTrue(claw.getEncoder());
         buttons.button(9).whileTrue(claw.clawElbowRotateUp()).onFalse(claw.clawElbowRotateStop());
 
         // * Controlling the elevator
-        buttons.button(4).whileTrue(elevator.reset());
-        buttons.button(5).onTrue(elevator.goToLevel(1));
-        buttons.button(6).onTrue(elevator.goToLevel(2));
-        buttons.button(7).onTrue(elevator.goToLevel(3));
-        buttons.button(8).onTrue(elevator.goToLevel(4));
+        // buttons.button(4).whileTrue(elevator.reset());
+        // buttons.button(5).onTrue(elevator.goToLevel(1));
+        // buttons.button(6).onTrue(elevator.goToLevel(2));
+        // buttons.button(7).onTrue(elevator.goToLevel(3));
+        // buttons.button(8).onTrue(elevator.goToLevel(4));
     }
 
     /**

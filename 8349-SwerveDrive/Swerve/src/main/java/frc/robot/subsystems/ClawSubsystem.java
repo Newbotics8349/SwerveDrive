@@ -20,7 +20,11 @@ public class ClawSubsystem extends SubsystemBase {
   SparkMax orangeMotor = new SparkMax(41, MotorType.kBrushless);
   SparkMax greenMotor = new SparkMax(42, MotorType.kBrushless);
   SparkMax elbowMotor = new SparkMax(61, MotorType.kBrushless);
-  DutyCycleEncoder encoder = new DutyCycleEncoder(0, 4.0, 2.0);
+  SparkMax wristMotor = new SparkMax(60, MotorType.kBrushless);
+  DutyCycleEncoder wristEncoder = new DutyCycleEncoder(4, 360.0, 17.568009439200235);
+  DutyCycleEncoder elbowEncoder = new DutyCycleEncoder(3, 360.0, 11.241936281048407);
+  double elbowValue;
+  double wristValue;
   /**
    * Example command factory method.
    *
@@ -58,9 +62,13 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command clawElbowRotateUp(){
     return run(() -> {
-      if(encoder.get() < 3.5){
+      if(elbowValue > 25 && elbowEncoder.get() > 25){
+        elbowMotor.set(-0.2);
+        System.out.println("1");
+      }else if (elbowValue < 25 && elbowEncoder.get() < 25){
         elbowMotor.set(0.2);
-      }else{
+        System.out.println("2");
+      } else {
         elbowMotor.set(0);
       }
     });
@@ -68,8 +76,21 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command clawElbowRotateDown(){
     return run(() -> {
-      elbowMotor.set(-0.2);
+      if (elbowEncoder.get() < 60) {
+        elbowMotor.set(0.2);
+      }
     });
+  }
+
+  public Command getEncoder() {
+    return runOnce(
+      () -> {
+        elbowValue = elbowEncoder.get();
+        wristValue = wristEncoder.get();
+        System.out.println(elbowValue);
+        System.out.println(wristValue);
+      }
+    );
   }
 
   public Command clawElbowRotateStop(){

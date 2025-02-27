@@ -120,7 +120,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // TODO: Uncomment when limit switch is installed 
     // Reset the encoder if the limit switch is triggered
     if (atZero())
       elevatorEncoder.reset();
