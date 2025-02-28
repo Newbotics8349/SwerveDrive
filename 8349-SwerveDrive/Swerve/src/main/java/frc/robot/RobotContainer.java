@@ -117,6 +117,7 @@ public class RobotContainer {
         // targetsSeen.onFalse(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
 
         //Controlling the arm of the claw
+        buttons.button(9).onTrue(claw.getEncoder());
         buttons.button(9).whileTrue(claw.clawElbowRotateUp()).onFalse(claw.clawElbowRotateStop());
 
         // Elevator buttons
