@@ -35,6 +35,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final double ticksPerInch = (1.0 / 256.0);
   // Heights are relative to the end-effector at it's zero position
   private final double levelHeights[] = { 0, 10, 15, 20, 25 };
+  private final double algaeHeights[] = { 0, 12, 17 };
   // PID values
   private final float kP = 1;
   private final float kI = 0;
@@ -56,6 +57,40 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Determine associated height needed to be travelled to
     double targetHeight = levelHeights[level];
+    return runOnce(
+        () -> {
+          boolean up = true;
+          if (elevatorEncoder.getDistance() < targetHeight) {
+            up = false;
+          }
+          double curDistance = elevatorEncoder.getDistance();
+          time.start();
+
+          double motorSpeed = pidController.calculate(elevatorEncoder.getDistance(), targetHeight);
+          leftMotor.set(-motorSpeed);
+          rightMotor.set(-motorSpeed);
+          while ((up && elevatorEncoder.getDistance() > targetHeight || !up && elevatorEncoder.getDistance() < targetHeight) && (time.getDuration() < 1 || Math.floor(curDistance * 100) / 100 != Math.floor(elevatorEncoder.getDistance() * 100) / 100)) {
+            System.out.println(curDistance);
+            System.out.println(elevatorEncoder.getDistance());
+            motorSpeed = pidController.calculate(elevatorEncoder.getDistance(), targetHeight);
+            leftMotor.set(-motorSpeed);
+            rightMotor.set(-motorSpeed);
+            if (time.getDuration() > 1.5) {
+              curDistance = elevatorEncoder.getDistance();
+              time.start();
+            }
+          }
+        });
+  }
+
+  public Command goToAlgae(int level) {
+    // Check for valid args
+    if (level < 1 || level > algaeHeights.length)
+      return run(() -> {
+      });
+
+    // Determine associated height needed to be travelled to
+    double targetHeight = algaeHeights[level];
     return runOnce(
         () -> {
           boolean up = true;

@@ -22,6 +22,14 @@ public class CageSubsystem extends SubsystemBase {
     });
   }
 
+  public Command stopCage() {
+    return run(
+      () -> {
+        cageMotor.set(0);
+      }
+    );
+  }
+
   /**
    * Example command factory method.
    *

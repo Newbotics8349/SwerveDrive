@@ -112,31 +112,30 @@ public class RobotContainer {
     private void configureBindings() {
         // * Send a debug message when any targets are seen
         Trigger targetsSeen = new Trigger(vision::hasTargets);
-        Trigger cancelElevator = buttons.button(10);
         targetsSeen.debounce(0.1);
         targetsSeen.onTrue(leds.debugMode(vision));
         // targetsSeen.onFalse(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
 
-        buttons.button(1).whileTrue(drivebase.followPathCommand(vision));
-
-        // * Controlling the claw moving in / out
-        // Claw in supercedes claw out
-        buttons.button(2).whileTrue(claw.clawIn()).onFalse(claw.clawStop());
-        buttons.button(3).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
-        // buttons.button(3).and(buttons.button(2).negate()).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
-
         //Controlling the arm of the claw
         buttons.button(9).whileTrue(claw.clawElbowRotateUp()).onFalse(claw.clawElbowRotateStop());
 
-        // * Controlling the elevator
-        buttons.button(4).whileTrue(elevator.reset());
-        buttons.button(5).onTrue(elevator.goToLevel(1));
-        buttons.button(6).onTrue(elevator.goToLevel(2));
-        buttons.button(7).onTrue(elevator.goToLevel(3));
-        buttons.button(8).onTrue(elevator.goToLevel(4));
+        // Elevator buttons
+        buttons.button(1).onTrue(elevator.goToLevel(4));
+        buttons.button(2).onTrue(elevator.goToLevel(3));
+        buttons.button(3).onTrue(elevator.goToLevel(2));
 
-        //controlling the cage arm
-        buttons.button(10).onTrue(cage.raiseCage());
+        // Cage climb
+        buttons.button(4).whileTrue(cage.raiseCage()).onFalse(cage.stopCage());
+
+        // Algae half-levels
+        buttons.button(7).onTrue(elevator.goToAlgae(2));
+        buttons.button(8).onTrue(elevator.goToAlgae(1));
+        
+        // Claw intake / outtake
+        buttons.button(10).whileTrue(claw.clawIn()).onFalse(claw.clawStop());
+        buttons.button(11).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
+
+        buttons.button(12).whileTrue(elevator.reset());
     }
 
     /**
