@@ -135,6 +135,8 @@ public class RobotContainer {
         buttons.button(9).whileTrue(claw.wristAlgae()).onFalse(claw.stopWrist());
         buttons.button(10).whileTrue(claw.wristL4()).onFalse(claw.stopWrist());
 
+        buttons.button(11).whileTrue(claw.wristIntake()).onFalse(claw.stopWrist());
+
         buttons.button(12).whileTrue(claw.clawElbowRotateUp()).onFalse(claw.clawElbowRotateStop());
         
         // Claw intake / outtake

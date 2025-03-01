@@ -111,6 +111,19 @@ public class ClawSubsystem extends SubsystemBase {
     });
   }
 
+  public Command wristIntake(){
+    return run(()-> {
+      if (wristEncoder.get() < 164.5) {
+        wristMotor.set(0.2);
+      } else if (wristEncoder.get() > 164.5) {
+        wristMotor.set(-0.2);
+      } else {
+        wristMotor.set(0);
+      }
+    });
+  }
+
+
   public Command wristL4(){
     return run(()-> {
       if (wristEncoder.get() < 234) {
