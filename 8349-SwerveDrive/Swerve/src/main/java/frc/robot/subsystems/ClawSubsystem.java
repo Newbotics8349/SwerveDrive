@@ -69,7 +69,7 @@ public class ClawSubsystem extends SubsystemBase {
       }
     });
   }
-  
+
   public Command getEncoder() {
     return runOnce(
       () -> {
@@ -101,9 +101,9 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command wristProcessor(){
     return run(()-> {
-      if (wristEncoder.get() < 89) {
+      if (wristEncoder.get() < 95) {
         wristMotor.set(0.2);
-      } else if (wristEncoder.get() > 89) {
+      } else if (wristEncoder.get() > 95) {
         wristMotor.set(-0.2);
       } else {
         wristMotor.set(0);
