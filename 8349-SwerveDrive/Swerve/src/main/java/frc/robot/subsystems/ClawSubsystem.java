@@ -20,7 +20,7 @@ public class ClawSubsystem extends SubsystemBase {
   SparkMax elbowMotor = new SparkMax(61, MotorType.kBrushless);
   SparkMax wristMotor = new SparkMax(60, MotorType.kBrushless);
   DutyCycleEncoder wristEncoder = new DutyCycleEncoder(4, 360.0, 172);
-  DutyCycleEncoder elbowEncoder = new DutyCycleEncoder(3, 360.0, 264);
+  DutyCycleEncoder elbowEncoder = new DutyCycleEncoder(3, 360.0, 234);
   double elbowValue;
   double wristValue;
   /**
@@ -60,9 +60,9 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command clawElbowRotateUp(){
     return run(() -> {
-      if(elbowEncoder.get() > 70 && elbowEncoder.get() > 70){
+      if(elbowEncoder.get() > 100 && elbowEncoder.get() > 100){
         elbowMotor.set(-0.2);
-      }else if (elbowEncoder.get() < 70 && elbowEncoder.get() < 70){
+      }else if (elbowEncoder.get() < 100 && elbowEncoder.get() < 100){
         elbowMotor.set(0.2);
       } else {
         elbowMotor.set(0);
@@ -89,9 +89,9 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command wristAlgae(){
     return run(()-> {
-      if (wristEncoder.get() < 18) {
+      if (wristEncoder.get() < 48) {
         wristMotor.set(0.2);
-      } else if (wristEncoder.get() > 18) {
+      } else if (wristEncoder.get() > 48) {
         wristMotor.set(-0.2);
       } else {
         wristMotor.set(0);
@@ -101,9 +101,9 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command wristProcessor(){
     return run(()-> {
-      if (wristEncoder.get() < 95) {
+      if (wristEncoder.get() < 125) {
         wristMotor.set(0.2);
-      } else if (wristEncoder.get() > 95) {
+      } else if (wristEncoder.get() > 125) {
         wristMotor.set(-0.2);
       } else {
         wristMotor.set(0);
@@ -113,9 +113,9 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command wristIntake(){
     return run(()-> {
-      if (wristEncoder.get() < 164.5) {
+      if (wristEncoder.get() < 194.5) {
         wristMotor.set(0.2);
-      } else if (wristEncoder.get() > 164.5) {
+      } else if (wristEncoder.get() > 194.5) {
         wristMotor.set(-0.2);
       } else {
         wristMotor.set(0);
@@ -126,9 +126,9 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command wristL4(){
     return run(()-> {
-      if (wristEncoder.get() < 234) {
+      if (wristEncoder.get() < 264) {
         wristMotor.set(0.2);
-      } else if (wristEncoder.get() > 234) {
+      } else if (wristEncoder.get() > 264) {
         wristMotor.set(-0.2);
       } else {
         wristMotor.set(0);
@@ -138,9 +138,9 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command wristLX(){
     return run(()-> {
-      if (wristEncoder.get() < 259) {
+      if (wristEncoder.get() < 289) {
         wristMotor.set(0.2);
-      } else if (wristEncoder.get() > 259) {
+      } else if (wristEncoder.get() > 289) {
         wristMotor.set(-0.2);
       } else {
         wristMotor.set(0);
@@ -148,18 +148,6 @@ public class ClawSubsystem extends SubsystemBase {
     });
   }
 
-  public Command wristReef(){
-    return run(() -> {
-      if (wristEncoder.get() < 30) {
-        wristMotor.set(0.2);
-      } else if (wristEncoder.get() > 30){
-        wristMotor.set(-0.2);
-      } else {
-        wristMotor.set(0);
-      }
-      System.out.println(wristEncoder.get());
-    });
-  }
   public Command stopWrist() {
     return run(() -> {
       wristMotor.set(0);

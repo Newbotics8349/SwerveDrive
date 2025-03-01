@@ -118,13 +118,13 @@ public class RobotContainer {
         // targetsSeen.onFalse(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
 
         // Algae half levels
-        buttons.button(5).onTrue(elevator.goToAlgae(2));
-        buttons.button(6).onTrue(elevator.goToAlgae(1));
+        buttons.button(5).whileTrue(elevator.goToAlgae(2)).onFalse(elevator.stop());
+        buttons.button(6).whileTrue(elevator.goToAlgae(1)).onFalse(elevator.stop());
 
         // Elevator buttons
-        buttons.button(1).onTrue(elevator.goToLevel(4));
-        buttons.button(2).onTrue(elevator.goToLevel(3));
-        buttons.button(3).onTrue(elevator.goToLevel(2));
+        buttons.button(1).whileTrue(elevator.goToLevel(4)).onFalse(elevator.stop());
+        buttons.button(2).whileTrue(elevator.goToLevel(3)).onFalse(elevator.stop());
+        buttons.button(3).whileTrue(elevator.goToLevel(2)).onFalse(elevator.stop());
 
         // Cage climb
         buttons.button(4).whileTrue(cage.raiseCage()).onFalse(cage.stopCage());

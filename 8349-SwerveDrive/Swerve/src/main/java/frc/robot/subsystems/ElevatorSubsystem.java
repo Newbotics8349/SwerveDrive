@@ -51,71 +51,43 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public Command goToLevel(int level) {
     // Check for valid args
-    if (level < 1 || level > levelHeights.length)
+    if (level < 1 || level >= levelHeights.length)
       return run(() -> {
       });
 
     // Determine associated height needed to be travelled to
     double targetHeight = levelHeights[level];
-    return runOnce(
+    return run(
         () -> {
-          boolean up = true;
-          if (elevatorEncoder.getDistance() < targetHeight) {
-            up = false;
-          }
-          double curDistance = elevatorEncoder.getDistance();
-          time.start();
-
-          double motorSpeed = pidController.calculate(elevatorEncoder.getDistance(), targetHeight);
-          leftMotor.set(-motorSpeed);
-          rightMotor.set(-motorSpeed);
-          while ((up && elevatorEncoder.getDistance() > targetHeight || !up && elevatorEncoder.getDistance() < targetHeight) && (time.getDuration() < 1 || Math.floor(curDistance * 100) / 100 != Math.floor(elevatorEncoder.getDistance() * 100) / 100)) {
-            System.out.println(curDistance);
-            System.out.println(elevatorEncoder.getDistance());
-            motorSpeed = pidController.calculate(elevatorEncoder.getDistance(), targetHeight);
-            leftMotor.set(-motorSpeed);
-            rightMotor.set(-motorSpeed);
-            if (time.getDuration() > 1.5) {
-              curDistance = elevatorEncoder.getDistance();
-              time.start();
-            }
+          if (elevatorEncoder.get() < targetHeight) {
+            leftMotor.set(-0.5);
+            rightMotor.set(0.5);
+          } else {
+            leftMotor.set(0.5);
+            rightMotor.set(-0.5);
           }
         });
   }
 
   public Command goToAlgae(int level) {
     // Check for valid args
-    if (level < 1 || level > algaeHeights.length)
+    if (level < 1 || level >= algaeHeights.length)
       return run(() -> {
       });
 
     // Determine associated height needed to be travelled to
     double targetHeight = algaeHeights[level];
-    return runOnce(
+    return run(
         () -> {
-          boolean up = true;
-          if (elevatorEncoder.getDistance() < targetHeight) {
-            up = false;
-          }
-          double curDistance = elevatorEncoder.getDistance();
-          time.start();
-
-          double motorSpeed = pidController.calculate(elevatorEncoder.getDistance(), targetHeight);
-          leftMotor.set(-motorSpeed);
-          rightMotor.set(-motorSpeed);
-          while ((up && elevatorEncoder.getDistance() > targetHeight || !up && elevatorEncoder.getDistance() < targetHeight) && (time.getDuration() < 1 || Math.floor(curDistance * 100) / 100 != Math.floor(elevatorEncoder.getDistance() * 100) / 100)) {
-            System.out.println(curDistance);
-            System.out.println(elevatorEncoder.getDistance());
-            motorSpeed = pidController.calculate(elevatorEncoder.getDistance(), targetHeight);
-            leftMotor.set(-motorSpeed);
-            rightMotor.set(-motorSpeed);
-            if (time.getDuration() > 1.5) {
-              curDistance = elevatorEncoder.getDistance();
-              time.start();
-            }
+          if (elevatorEncoder.get() < targetHeight) {
+            leftMotor.set(-0.5);
+            rightMotor.set(0.5);
+          } else {
+            leftMotor.set(0.5);
+            rightMotor.set(-0.5);
           }
         });
-  }
+      }
 
   public Command stop() {
     return runOnce(
