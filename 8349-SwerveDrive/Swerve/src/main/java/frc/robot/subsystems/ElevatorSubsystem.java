@@ -59,7 +59,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     double targetHeight = levelHeights[level];
     return run(
         () -> {
-          if (elevatorEncoder.get() < targetHeight) {
+          if (elevatorEncoder.getDistance() < targetHeight) {
             leftMotor.set(-0.5);
             rightMotor.set(0.5);
           } else {
@@ -79,7 +79,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     double targetHeight = algaeHeights[level];
     return run(
         () -> {
-          if (elevatorEncoder.get() < targetHeight) {
+          if (elevatorEncoder.getDistance() < targetHeight) {
             leftMotor.set(-0.5);
             rightMotor.set(0.5);
           } else {
