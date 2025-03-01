@@ -18,13 +18,13 @@ public class CageSubsystem extends SubsystemBase {
   public CageSubsystem() {}
 
 
-  Spark cageMotor = new Spark(9);
+  Spark cageMotor = new Spark(8);
 
   public Command raiseCage(){
     return run(() -> {
-      System.out.println("here");
-      System.out.println(cageMotor.get());
-      cageMotor.set(1);
+      cageMotor.setVoltage(7.5);
+      System.out.println(cageMotor.getVoltage());
+      cageMotor.set(-0.2);
     });
   }
 

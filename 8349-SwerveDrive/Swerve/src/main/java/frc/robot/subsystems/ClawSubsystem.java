@@ -7,10 +7,8 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
-import edu.wpi.first.wpilibj.DigitalInput;
+
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -21,8 +19,8 @@ public class ClawSubsystem extends SubsystemBase {
   SparkMax greenMotor = new SparkMax(42, MotorType.kBrushless);
   SparkMax elbowMotor = new SparkMax(61, MotorType.kBrushless);
   SparkMax wristMotor = new SparkMax(60, MotorType.kBrushless);
-  DutyCycleEncoder wristEncoder = new DutyCycleEncoder(4, 360.0, 17.568009439200235);
-  DutyCycleEncoder elbowEncoder = new DutyCycleEncoder(3, 360.0, 292.5);
+  DutyCycleEncoder wristEncoder = new DutyCycleEncoder(4, 360.0, 172);
+  DutyCycleEncoder elbowEncoder = new DutyCycleEncoder(3, 360.0, 264);
   double elbowValue;
   double wristValue;
   /**
@@ -62,27 +60,16 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command clawElbowRotateUp(){
     return run(() -> {
-      System.out.println(elbowEncoder.get());
-      if(elbowValue > 60 && elbowEncoder.get() > 60){
+      if(elbowEncoder.get() > 70 && elbowEncoder.get() > 70){
         elbowMotor.set(-0.2);
-        System.out.println("1");
-      }else if (elbowValue < 60 && elbowEncoder.get() < 60){
+      }else if (elbowEncoder.get() < 70 && elbowEncoder.get() < 70){
         elbowMotor.set(0.2);
-        System.out.println("2");
       } else {
         elbowMotor.set(0);
       }
     });
   }
-
-  public Command clawElbowRotateDown(){
-    return run(() -> {
-      if (elbowEncoder.get() < 60) {
-        elbowMotor.set(0.2);
-      }
-    });
-  }
-
+  
   public Command getEncoder() {
     return runOnce(
       () -> {
@@ -97,6 +84,72 @@ public class ClawSubsystem extends SubsystemBase {
   public Command clawElbowRotateStop(){
     return run(() -> {
       elbowMotor.set(0);
+    });
+  }
+
+  public Command wristAlgae(){
+    return run(()-> {
+      if (wristEncoder.get() < 18) {
+        wristMotor.set(0.2);
+      } else if (wristEncoder.get() > 18) {
+        wristMotor.set(-0.2);
+      } else {
+        wristMotor.set(0);
+      }
+    });
+  }
+
+  public Command wristProcessor(){
+    return run(()-> {
+      if (wristEncoder.get() < 89) {
+        wristMotor.set(0.2);
+      } else if (wristEncoder.get() > 89) {
+        wristMotor.set(-0.2);
+      } else {
+        wristMotor.set(0);
+      }
+    });
+  }
+
+  public Command wristL4(){
+    return run(()-> {
+      if (wristEncoder.get() < 234) {
+        wristMotor.set(0.2);
+      } else if (wristEncoder.get() > 234) {
+        wristMotor.set(-0.2);
+      } else {
+        wristMotor.set(0);
+      }
+    });
+  }
+
+  public Command wristLX(){
+    return run(()-> {
+      if (wristEncoder.get() < 259) {
+        wristMotor.set(0.2);
+      } else if (wristEncoder.get() > 259) {
+        wristMotor.set(-0.2);
+      } else {
+        wristMotor.set(0);
+      }
+    });
+  }
+
+  public Command wristReef(){
+    return run(() -> {
+      if (wristEncoder.get() < 30) {
+        wristMotor.set(0.2);
+      } else if (wristEncoder.get() > 30){
+        wristMotor.set(-0.2);
+      } else {
+        wristMotor.set(0);
+      }
+      System.out.println(wristEncoder.get());
+    });
+  }
+  public Command stopWrist() {
+    return run(() -> {
+      wristMotor.set(0);
     });
   }
 

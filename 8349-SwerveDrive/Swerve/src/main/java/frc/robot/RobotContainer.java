@@ -53,7 +53,8 @@ public class RobotContainer {
     private final CommandXboxController m_driverController = new CommandXboxController(
             OperatorConstants.kDriverControllerPort);
 
-    CommandGenericHID buttons = new CommandGenericHID(1);
+    CommandGenericHID buttons = new CommandGenericHID(0);
+    CommandGenericHID buttons2 = new CommandGenericHID(1);
 
     // * Define objects for autonomous routine selection
     // private final SendableChooser<Command> autoSelector = AutoBuilder.buildAutoChooser();
@@ -116,10 +117,9 @@ public class RobotContainer {
         targetsSeen.onTrue(leds.debugMode(vision));
         // targetsSeen.onFalse(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
 
-        //Controlling the arm of the claw
-        buttons.button(5).onTrue(elevator.lswitch());
-        buttons.button(6).onTrue(claw.getEncoder());
-        buttons.button(9).whileTrue(claw.clawElbowRotateUp()).onFalse(claw.clawElbowRotateStop());
+        // Algae half levels
+        buttons.button(5).onTrue(elevator.goToAlgae(1));
+        buttons.button(6).onTrue(elevator.goToAlgae(2));
 
         // Elevator buttons
         buttons.button(1).onTrue(elevator.goToLevel(4));
@@ -129,15 +129,19 @@ public class RobotContainer {
         // Cage climb
         buttons.button(4).whileTrue(cage.raiseCage()).onFalse(cage.stopCage());
 
-        // Algae half-levels
-        buttons.button(7).onTrue(elevator.goToAlgae(2));
-        buttons.button(8).onTrue(elevator.goToAlgae(1));
+        // Claw stuff
+        buttons.button(7).whileTrue(claw.wristLX()).onFalse(claw.stopWrist());
+        buttons.button(8).whileTrue(claw.wristProcessor()).onFalse(claw.stopWrist());
+        buttons.button(9).whileTrue(claw.wristAlgae()).onFalse(claw.stopWrist());
+        buttons.button(10).whileTrue(claw.wristL4()).onFalse(claw.stopWrist());
+
+        buttons.button(12).whileTrue(claw.clawElbowRotateUp()).onFalse(claw.clawElbowRotateStop());
         
         // Claw intake / outtake
-        buttons.button(10).whileTrue(claw.clawIn()).onFalse(claw.clawStop());
-        buttons.button(11).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
+        buttons2.button(1).whileTrue(claw.clawIn()).onFalse(claw.clawStop());
+        buttons2.button(2).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
 
-        buttons.button(12).whileTrue(elevator.reset());
+        buttons2.button(3).whileTrue(elevator.reset());
     }
 
     /**

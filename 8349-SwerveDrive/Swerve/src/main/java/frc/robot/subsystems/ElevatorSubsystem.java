@@ -34,7 +34,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   // * Constants for moving elevator to required heights
   private final double ticksPerInch = (1.0 / 256.0);
   // Heights are relative to the end-effector at it's zero position
-  private final double levelHeights[] = { 0, 1, 2, 3, 4 };
+  private final double levelHeights[] = { 0, 0, 2, 4, 6 };
   private final double algaeHeights[] = { 0, 12, 17 };
   // PID values
   private final float kP = 1;
@@ -141,7 +141,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     return run(
         () -> {
           System.out.println(lSwitch.get());
-          if (lSwitch.get()) {
+          if (!lSwitch.get()) {
             leftMotor.set(0.1);
             rightMotor.set(-0.1);
           }
@@ -151,7 +151,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   public Command lswitch() {
     return runOnce(
       () -> {
-        System.out.println(lSwitch.get());
         System.out.println(atZero());
       }
     );
@@ -159,7 +158,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   // Limit switch condition
   public boolean atZero() {
-    return !lSwitch.get();
+    return lSwitch.get();
   }
 
   @Override
