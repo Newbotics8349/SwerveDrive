@@ -22,7 +22,7 @@ public class ClawSubsystem extends SubsystemBase {
   SparkMax elbowMotor = new SparkMax(61, MotorType.kBrushless);
   SparkMax wristMotor = new SparkMax(60, MotorType.kBrushless);
   DutyCycleEncoder wristEncoder = new DutyCycleEncoder(4, 360.0, 17.568009439200235);
-  DutyCycleEncoder elbowEncoder = new DutyCycleEncoder(3, 360.0, 11.241936281048407);
+  DutyCycleEncoder elbowEncoder = new DutyCycleEncoder(3, 360.0, 292.5);
   double elbowValue;
   double wristValue;
   /**
@@ -62,10 +62,11 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command clawElbowRotateUp(){
     return run(() -> {
-      if(elbowValue > 25 && elbowEncoder.get() > 25){
+      System.out.println(elbowEncoder.get());
+      if(elbowValue > 60 && elbowEncoder.get() > 60){
         elbowMotor.set(-0.2);
         System.out.println("1");
-      }else if (elbowValue < 25 && elbowEncoder.get() < 25){
+      }else if (elbowValue < 60 && elbowEncoder.get() < 60){
         elbowMotor.set(0.2);
         System.out.println("2");
       } else {

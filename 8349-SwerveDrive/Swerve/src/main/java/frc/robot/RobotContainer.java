@@ -53,7 +53,7 @@ public class RobotContainer {
     private final CommandXboxController m_driverController = new CommandXboxController(
             OperatorConstants.kDriverControllerPort);
 
-    CommandGenericHID buttons = new CommandGenericHID(0);
+    CommandGenericHID buttons = new CommandGenericHID(1);
 
     // * Define objects for autonomous routine selection
     // private final SendableChooser<Command> autoSelector = AutoBuilder.buildAutoChooser();
@@ -117,7 +117,8 @@ public class RobotContainer {
         // targetsSeen.onFalse(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
 
         //Controlling the arm of the claw
-        buttons.button(9).onTrue(claw.getEncoder());
+        buttons.button(5).onTrue(elevator.lswitch());
+        buttons.button(6).onTrue(claw.getEncoder());
         buttons.button(9).whileTrue(claw.clawElbowRotateUp()).onFalse(claw.clawElbowRotateStop());
 
         // Elevator buttons

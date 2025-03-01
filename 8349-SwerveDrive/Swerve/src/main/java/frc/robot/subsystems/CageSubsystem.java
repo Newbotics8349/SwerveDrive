@@ -9,21 +9,27 @@ import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import 
+edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 public class CageSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   public CageSubsystem() {}
 
-  SparkMax cageMotor = new SparkMax(55, MotorType.kBrushed);
+
+  Spark cageMotor = new Spark(9);
 
   public Command raiseCage(){
     return run(() -> {
-      cageMotor.set(0.6);
+      System.out.println("here");
+      System.out.println(cageMotor.get());
+      cageMotor.set(1);
     });
   }
 
   public Command stopCage() {
-    return run(
+    return runOnce(
       () -> {
         cageMotor.set(0);
       }
