@@ -118,8 +118,8 @@ public class RobotContainer {
         // targetsSeen.onFalse(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
 
         // Algae half levels
-        buttons.button(5).onTrue(elevator.goToAlgae(1));
-        buttons.button(6).onTrue(elevator.goToAlgae(2));
+        buttons.button(5).onTrue(elevator.goToAlgae(2));
+        buttons.button(6).onTrue(elevator.goToAlgae(1));
 
         // Elevator buttons
         buttons.button(1).onTrue(elevator.goToLevel(4));
