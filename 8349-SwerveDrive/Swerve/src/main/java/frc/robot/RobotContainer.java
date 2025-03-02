@@ -158,12 +158,13 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        // return new SequentialCommandGroup(
-        //     new moveElbowOut(claw)
-        // );
-        return Commands.run(
-            () -> 
-            drivebase.callingDrive(new ChassisSpeeds(-1, 0, 0), null), drivebase).withTimeout(2);
+        return new SequentialCommandGroup(
+            new moveElbowOut(claw),
+            new ElevatorUpCommand(elevator)
+        );
+        // return Commands.run(
+        //     () -> 
+        //     drivebase.callingDrive(new ChassisSpeeds(-1, 0, 0), null), drivebase).withTimeout(2);
         // return autoSelector.getSelected();
         // // Get name of routine to run from the selector
         // String selectedAutoName = autoSelector.getSelected();

@@ -74,6 +74,10 @@ public class ClawSubsystem extends SubsystemBase {
     });
   }
 
+  public double getElbowEncoder() {
+    return elbowEncoder.get();
+  }
+
   public Command getEncoder() {
     return runOnce(
         () -> {
