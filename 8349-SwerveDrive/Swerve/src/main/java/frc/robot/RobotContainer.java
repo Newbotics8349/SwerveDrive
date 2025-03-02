@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.DriveForwards;
 import frc.robot.commands.ElevatorUpCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.moveElbowOut;
@@ -23,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -143,8 +145,6 @@ public class RobotContainer {
 
         buttons.button(11).whileTrue(claw.wristIntake()).onFalse(claw.stopWrist());
 
-        buttons.button(12).whileTrue(claw.clawElbowRotateUp()).onFalse(claw.clawElbowRotateStop());
-
         // Claw intake / outtake
         buttons2.button(1).whileTrue(claw.clawIn()).onFalse(claw.clawStop());
         buttons2.button(2).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
@@ -159,8 +159,11 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         return new SequentialCommandGroup(
-            new moveElbowOut(claw),
-            new ElevatorUpCommand(elevator)
+            new ParallelCommandGroup(
+                new moveElbowOut(claw),
+                new DriveForwards(drivebase)
+            )
+            // new ElevatorUpCommand(elevator)
         );
         // return Commands.run(
         //     () -> 

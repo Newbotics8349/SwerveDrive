@@ -62,6 +62,14 @@ public class ClawSubsystem extends SubsystemBase {
     });
   }
 
+  public void clawRotateAuto() {
+    elbowMotor.set(0.2);
+  }
+
+  public Command elbowSetSpeed(double speed) {
+    return run(() -> elbowMotor.set(speed));
+  }
+
   public Command clawElbowRotateUp() {
     return run(() -> {
       if (elbowEncoder.get() > 120 && elbowEncoder.get() > 120) {

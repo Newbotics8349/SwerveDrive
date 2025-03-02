@@ -64,11 +64,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     return run(
         () -> {
           if (elevatorEncoder.getDistance() < targetHeight) {
-            leftMotor.set(-0.5);
-            rightMotor.set(0.5);
+            leftMotor.set(-0.75);
+            rightMotor.set(0.75);
           } else {
-            leftMotor.set(0.5);
-            rightMotor.set(-0.5);
+            leftMotor.set(0.75);
+            rightMotor.set(-0.75);
           }
         });
   }
@@ -84,11 +84,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     return run(
         () -> {
           if (elevatorEncoder.getDistance() < targetHeight) {
-            leftMotor.set(-0.5);
-            rightMotor.set(0.5);
+            leftMotor.set(-0.75);
+            rightMotor.set(0.75);
           } else {
-            leftMotor.set(0.5);
-            rightMotor.set(-0.5);
+            leftMotor.set(0.75);
+            rightMotor.set(-0.75);
           }
         });
       }
