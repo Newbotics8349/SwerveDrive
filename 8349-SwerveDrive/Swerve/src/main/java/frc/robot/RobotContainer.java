@@ -9,6 +9,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.DriveForwards;
 import frc.robot.commands.ElevatorUpCommand;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.WinchSetup;
 import frc.robot.commands.moveElbowOut;
 import frc.robot.subsystems.AprilTagSubsystem;
 
@@ -145,6 +146,8 @@ public class RobotContainer {
 
         buttons.button(11).whileTrue(claw.wristIntake()).onFalse(claw.stopWrist());
 
+        buttons.button(12).whileTrue(claw.clawElbowRotateUp());
+
         // Claw intake / outtake
         buttons2.button(1).whileTrue(claw.clawIn()).onFalse(claw.clawStop());
         buttons2.button(2).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
@@ -160,6 +163,7 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
+                // new WinchSetup(cage),
                 new moveElbowOut(claw),
                 new DriveForwards(drivebase)
             )
