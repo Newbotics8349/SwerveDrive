@@ -20,6 +20,14 @@ public class CageSubsystem extends SubsystemBase {
 
   Spark cageMotor = new Spark(8);
 
+  public void setupAutoCage() {
+    cageMotor.set(-0.5);
+  }
+
+  public void stopAutoCage() {
+    cageMotor.set(0);
+  }
+
   public Command raiseCage(){
     return run(() -> {
       // cageMotor.setVoltage(12);
