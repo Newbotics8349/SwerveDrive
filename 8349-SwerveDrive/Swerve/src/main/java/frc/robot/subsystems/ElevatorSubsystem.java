@@ -49,6 +49,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorEncoder.setDistancePerPulse(ticksPerInch);
   }
 
+  public double getElevatorDistance() {
+    return elevatorEncoder.getDistance();
+  }
+
   public Command goToLevel(int level) {
     // Check for valid args
     if (level < 1 || level >= levelHeights.length)
@@ -113,11 +117,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     return run(
         () -> {
           System.out.println(lSwitch.get());
-          if (!lSwitch.get()) {
-            leftMotor.set(0.1);
-            rightMotor.set(-0.1);
+          if (!lSwitch.get()) 
+            leftMotor.set(0.15);
+            rightMotor.set(-0.15);
           }
-        });
+        );
   }
 
   public Command lswitch() {

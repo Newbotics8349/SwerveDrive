@@ -22,9 +22,9 @@ public class CageSubsystem extends SubsystemBase {
 
   public Command raiseCage(){
     return run(() -> {
-      cageMotor.setVoltage(12);
-      System.out.println(cageMotor.getVoltage());
-      cageMotor.set(-0.2);
+      // cageMotor.setVoltage(12);
+      // System.out.println(cageMotor.getVoltage());
+      cageMotor.set(-1);
     });
   }
 

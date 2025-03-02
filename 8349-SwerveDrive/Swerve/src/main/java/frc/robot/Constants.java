@@ -34,4 +34,8 @@ public final class Constants {
       Units.inchesToMeters(0.5),
       Units.inchesToMeters(14),
       new Rotation2d(0));
+
+  // Speeds for claw intake/expell
+  public static final double clawInSpeed = 0.4;
+  public static final double clawOutSpeed = clawInSpeed;
 }

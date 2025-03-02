@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import frc.robot.Constants;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -14,15 +15,18 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClawSubsystem extends SubsystemBase {
   /** Creates a new ClawSubsystem. */
-  public ClawSubsystem() {}
+  public ClawSubsystem() {
+  }
+
   SparkMax orangeMotor = new SparkMax(41, MotorType.kBrushless);
   SparkMax greenMotor = new SparkMax(42, MotorType.kBrushless);
   SparkMax elbowMotor = new SparkMax(61, MotorType.kBrushless);
   SparkMax wristMotor = new SparkMax(60, MotorType.kBrushless);
   DutyCycleEncoder wristEncoder = new DutyCycleEncoder(4, 360.0, 172);
-  DutyCycleEncoder elbowEncoder = new DutyCycleEncoder(3, 360.0, 234);
+  DutyCycleEncoder elbowEncoder = new DutyCycleEncoder(3, 360.0, 214);
   double elbowValue;
   double wristValue;
+
   /**
    * Example command factory method.
    *
@@ -37,17 +41,17 @@ public class ClawSubsystem extends SubsystemBase {
         });
   }
 
-  public Command clawIn() {
+  public Command clawOut() {
     return run(() -> {
-      orangeMotor.set(-0.5);
-      greenMotor.set(0.5);
+      orangeMotor.set(-1 * Constants.clawInSpeed);
+      greenMotor.set(Constants.clawInSpeed);
     });
   }
 
-  public Command clawOut() {
+  public Command clawIn() {
     return run(() -> {
-      orangeMotor.set(0.5);
-      greenMotor.set(-0.5);
+      orangeMotor.set(Constants.clawOutSpeed);
+      greenMotor.set(-1 * Constants.clawOutSpeed);
     });
   }
 
@@ -58,11 +62,11 @@ public class ClawSubsystem extends SubsystemBase {
     });
   }
 
-  public Command clawElbowRotateUp(){
+  public Command clawElbowRotateUp() {
     return run(() -> {
-      if(elbowEncoder.get() > 100 && elbowEncoder.get() > 100){
+      if (elbowEncoder.get() > 120 && elbowEncoder.get() > 120) {
         elbowMotor.set(-0.2);
-      }else if (elbowEncoder.get() < 100 && elbowEncoder.get() < 100){
+      } else if (elbowEncoder.get() < 120 && elbowEncoder.get() < 120) {
         elbowMotor.set(0.2);
       } else {
         elbowMotor.set(0);
@@ -72,76 +76,74 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command getEncoder() {
     return runOnce(
-      () -> {
-        elbowValue = elbowEncoder.get();
-        wristValue = wristEncoder.get();
-        System.out.println(elbowValue);
-        System.out.println(wristValue);
-      }
-    );
+        () -> {
+          elbowValue = elbowEncoder.get();
+          wristValue = wristEncoder.get();
+          System.out.println(elbowValue);
+          System.out.println(wristValue);
+        });
   }
 
-  public Command clawElbowRotateStop(){
+  public Command clawElbowRotateStop() {
     return run(() -> {
       elbowMotor.set(0);
     });
   }
 
-  public Command wristAlgae(){
-    return run(()-> {
-      if (wristEncoder.get() < 48) {
-        wristMotor.set(0.2);
-      } else if (wristEncoder.get() > 48) {
-        wristMotor.set(-0.2);
+  public Command wristAlgae() {
+    return run(() -> {
+      if (wristEncoder.get() < 40) {
+        wristMotor.set(0.07);
+      } else if (wristEncoder.get() > 40) {
+        wristMotor.set(-0.07);
       } else {
         wristMotor.set(0);
       }
     });
   }
 
-  public Command wristProcessor(){
-    return run(()-> {
-      if (wristEncoder.get() < 125) {
-        wristMotor.set(0.2);
-      } else if (wristEncoder.get() > 125) {
-        wristMotor.set(-0.2);
+  public Command wristProcessor() {
+    return run(() -> {
+      if (wristEncoder.get() < 105) {
+        wristMotor.set(0.07);
+      } else if (wristEncoder.get() > 105) {
+        wristMotor.set(-0.07);
       } else {
         wristMotor.set(0);
       }
     });
   }
 
-  public Command wristIntake(){
-    return run(()-> {
-      if (wristEncoder.get() < 194.5) {
-        wristMotor.set(0.2);
-      } else if (wristEncoder.get() > 194.5) {
-        wristMotor.set(-0.2);
+  public Command wristIntake() {
+    return run(() -> {
+      if (wristEncoder.get() < 174.5) {
+        wristMotor.set(0.07);
+      } else if (wristEncoder.get() > 174.5) {
+        wristMotor.set(-0.07);
       } else {
         wristMotor.set(0);
       }
     });
   }
 
-
-  public Command wristL4(){
-    return run(()-> {
-      if (wristEncoder.get() < 264) {
-        wristMotor.set(0.2);
-      } else if (wristEncoder.get() > 264) {
-        wristMotor.set(-0.2);
+  public Command wristL4() {
+    return run(() -> {
+      if (wristEncoder.get() < 244) {
+        wristMotor.set(0.07);
+      } else if (wristEncoder.get() > 244) {
+        wristMotor.set(-0.07);
       } else {
         wristMotor.set(0);
       }
     });
   }
 
-  public Command wristLX(){
-    return run(()-> {
-      if (wristEncoder.get() < 289) {
-        wristMotor.set(0.2);
-      } else if (wristEncoder.get() > 289) {
-        wristMotor.set(-0.2);
+  public Command wristLX() {
+    return run(() -> {
+      if (wristEncoder.get() < 269) {
+        wristMotor.set(0.07);
+      } else if (wristEncoder.get() > 269) {
+        wristMotor.set(-0.07);
       } else {
         wristMotor.set(0);
       }
@@ -155,7 +157,8 @@ public class ClawSubsystem extends SubsystemBase {
   }
 
   /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
+   * An example method querying a boolean state of the subsystem (for example, a
+   * digital sensor).
    *
    * @return value of some boolean subsystem state, such as a digital sensor.
    */
@@ -172,5 +175,6 @@ public class ClawSubsystem extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+    System.out.println(wristEncoder.get());
   }
 }
