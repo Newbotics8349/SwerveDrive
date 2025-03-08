@@ -23,8 +23,11 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.util.DriveFeedforwards;
+import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import swervelib.parser.SwerveParser;
 import swervelib.SwerveDrive;
 import edu.wpi.first.math.controller.HolonomicDriveController;
@@ -48,9 +51,12 @@ public class SwerveSubsystem extends SubsystemBase {
     PPHolonomicDriveController holoDriveController;
     RobotConfig robotConfig;
 
+    private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+
   public SwerveSubsystem() {
     try
     {
+      gyro.reset();
       swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.maxSpeed,
                                                                   new Pose2d(new Translation2d(Meter.of(1),
                                                                                                Meter.of(4)),
@@ -92,6 +98,20 @@ public class SwerveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    if (gyro.isConnected()) {
+      SmartDashboard.putString("Gyro Status", "Connected");
+      
+      if (gyro.isCalibrating()) {
+          SmartDashboard.putString("Gyro Calibration", "Calibrating");
+      } else {
+          SmartDashboard.putString("Gyro Calibration", "Calibrated");
+      }
+      
+      SmartDashboard.putNumber("Gyro Heading", gyro.getAngle());  // Correct method for heading
+      System.out.println("Gyro Heading: " + gyro.getAngle());  // Optional debug print for terminal
+    } else {
+      SmartDashboard.putString("Gyro Status", "Not Connected");
+    }
   }
 
     @Override
