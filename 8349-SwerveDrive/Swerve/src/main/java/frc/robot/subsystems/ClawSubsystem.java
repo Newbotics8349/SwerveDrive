@@ -18,8 +18,8 @@ public class ClawSubsystem extends SubsystemBase {
   public ClawSubsystem() {
   }
 
-  SparkMax orangeMotor = new SparkMax(41, MotorType.kBrushless);
-  SparkMax greenMotor = new SparkMax(42, MotorType.kBrushless);
+  SparkMax motor41 = new SparkMax(41, MotorType.kBrushless);
+  SparkMax motor42 = new SparkMax(42, MotorType.kBrushless);
   SparkMax elbowMotor = new SparkMax(61, MotorType.kBrushless);
   SparkMax wristMotor = new SparkMax(60, MotorType.kBrushless);
   DutyCycleEncoder wristEncoder = new DutyCycleEncoder(4, 360.0, 172);
@@ -43,22 +43,22 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command clawOut() {
     return run(() -> {
-      orangeMotor.set(-1 * Constants.clawInSpeed);
-      greenMotor.set(Constants.clawInSpeed);
+      motor41.set(-1 * Constants.clawInSpeed);
+      motor42.set(Constants.clawInSpeed);
     });
   }
 
   public Command clawIn() {
     return run(() -> {
-      orangeMotor.set(Constants.clawOutSpeed);
-      greenMotor.set(-1 * Constants.clawOutSpeed);
+      motor41.set(Constants.clawOutSpeed);
+      motor42.set(-1 * Constants.clawOutSpeed);
     });
   }
 
   public Command clawStop() {
     return run(() -> {
-      orangeMotor.set(0);
-      greenMotor.set(0);
+      motor41.set(0);
+      motor42.set(0);
     });
   }
 
