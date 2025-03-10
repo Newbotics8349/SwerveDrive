@@ -81,6 +81,7 @@ public class RobotContainer {
         // AutoBuilder.buildAuto(newmarketAuto));
         // // Make autonomous routine selector available on the smart dashboard
         // SmartDashboard.putData("Auto choices", autoSelector);
+        SmartDashboard.putData(elevator);
 
         // * Configure sticks to drive the robot in TeleOp
         SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
@@ -127,32 +128,32 @@ public class RobotContainer {
         // targetsSeen.onFalse(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
 
         // Algae half levels
-        buttons.button(5).whileTrue(elevator.goToAlgae(2)).onFalse(elevator.stop());
-        buttons.button(6).whileTrue(elevator.goToAlgae(1)).onFalse(elevator.stop());
+        buttons.button(1).whileTrue(elevator.goToAlgae(2)).onFalse(elevator.stop());
+        buttons.button(2).whileTrue(elevator.goToAlgae(1)).onFalse(elevator.stop());
 
-        // Elevator buttons
-        buttons.button(1).whileTrue(elevator.goToLevel(4)).onFalse(elevator.stop());
-        buttons.button(2).whileTrue(elevator.goToLevel(3)).onFalse(elevator.stop());
-        buttons.button(3).whileTrue(elevator.goToLevel(2)).onFalse(elevator.stop());
+        // // Elevator buttons
+        // buttons.button(1).whileTrue(elevator.goToLevel(4)).onFalse(elevator.stop());
+        // buttons.button(2).whileTrue(elevator.goToLevel(3)).onFalse(elevator.stop());
+        // buttons.button(3).whileTrue(elevator.goToLevel(2)).onFalse(elevator.stop());
 
-        // Cage climb
-        buttons.button(4).whileTrue(cage.raiseCage()).onFalse(cage.stopCage());
+        // // Cage climb
+        // buttons.button(4).whileTrue(cage.raiseCage()).onFalse(cage.stopCage());
 
-        // Claw stuff
-        buttons.button(7).whileTrue(claw.wristLX()).onFalse(claw.stopWrist());
-        buttons.button(8).whileTrue(claw.wristProcessor()).onFalse(claw.stopWrist());
-        buttons.button(9).whileTrue(claw.wristAlgae()).onFalse(claw.stopWrist());
-        buttons.button(10).whileTrue(claw.wristL4()).onFalse(claw.stopWrist());
+        // // Claw stuff
+        // buttons.button(7).whileTrue(claw.wristLX()).onFalse(claw.stopWrist());
+        // buttons.button(8).whileTrue(claw.wristProcessor()).onFalse(claw.stopWrist());
+        // buttons.button(9).whileTrue(claw.wristAlgae()).onFalse(claw.stopWrist());
+        // buttons.button(10).whileTrue(claw.wristL4()).onFalse(claw.stopWrist());
 
-        buttons.button(11).whileTrue(claw.wristIntake()).onFalse(claw.stopWrist());
+        // buttons.button(11).whileTrue(claw.wristIntake()).onFalse(claw.stopWrist());
 
-        buttons.button(12).whileTrue(claw.clawElbowRotateUp());
+        // buttons.button(12).whileTrue(claw.clawElbowRotateUp());
 
-        // Claw intake / outtake
-        buttons2.button(1).whileTrue(claw.clawIn()).onFalse(claw.clawStop());
-        buttons2.button(2).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
+        // // Claw intake / outtake
+        // buttons2.button(1).whileTrue(claw.clawIn()).onFalse(claw.clawStop());
+        // buttons2.button(2).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
 
-        buttons2.button(3).whileTrue(elevator.reset());
+        // buttons2.button(3).whileTrue(elevator.reset());
     }
 
     /**

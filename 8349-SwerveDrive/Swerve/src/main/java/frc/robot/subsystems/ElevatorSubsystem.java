@@ -17,15 +17,22 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import java.util.Map;
+
+import edu.wpi.first.wpilibj.SPI;
 
 import com.ctre.phoenix.time.StopWatch;
 
 public class ElevatorSubsystem extends SubsystemBase {
   // * Components controlling elevator height
   DigitalInput lSwitch = new DigitalInput(2);
-  Encoder elevatorEncoder = new Encoder(0, 1, false, EncodingType.k4X);
+  Encoder elevatorEncoder;
   SparkMax leftMotor = new SparkMax(51, MotorType.kBrushless);
   SparkMax rightMotor = new SparkMax(52, MotorType.kBrushless);
 
@@ -36,17 +43,39 @@ public class ElevatorSubsystem extends SubsystemBase {
   // Heights are relative to the end-effector at it's zero position
   private final double levelHeights[] = { 0, 6, 10, 15, 22 };
   private final double algaeHeights[] = { 0, 12, 17 };
-  // PID values
-  private final float kP = 1;
-  private final float kI = 0;
-  private final float kD = 0;
-  PIDController pidController = new PIDController(kP, kI, kD);
+  private PIDController pid;
   CommandGenericHID buttons = new CommandGenericHID(0);
   boolean cancelElevator = false;
+  private double kP, kI, kD;
 
   public ElevatorSubsystem() {
     // Set the conversion factor so meaningful distance values are available
+    kP = 0;
+    kI = 0;
+    kD = 0;
+
+    elevatorEncoder = new Encoder(0, 1, false, EncodingType.k4X);
     elevatorEncoder.setDistancePerPulse(ticksPerInch);
+
+    pid = new PIDController(kP, kI, kD);
+
+    Shuffleboard.getTab("PID Tuning")
+        .add("P Value", kP)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+        .withProperties(Map.of("min", -1.0, "max", 1.0)) // specify widget properties here
+        .getEntry();
+
+    Shuffleboard.getTab("PID Tuning")
+        .add("I Value", kI)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+        .withProperties(Map.of("min", -1.0, "max", 1.0)) // specify widget properties here
+        .getEntry();
+
+    Shuffleboard.getTab("PID Tuning")
+        .add("D Value", kD)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+        .withProperties(Map.of("min", -1.0, "max", 1.0)) // specify widget properties here
+        .getEntry();
   }
 
   public double getElevatorDistance() {
@@ -63,33 +92,44 @@ public class ElevatorSubsystem extends SubsystemBase {
     double targetHeight = levelHeights[level];
     return run(
         () -> {
-          if (elevatorEncoder.getDistance() < targetHeight) {
-            leftMotor.set(-0.75);
-            rightMotor.set(0.75);
-          } else {
-            leftMotor.set(0.75);
-            rightMotor.set(-0.75);
-          }
+          // if (elevatorEncoder.getDistance() < targetHeight) {
+          //   leftMotor.set(-0.75);
+          //   rightMotor.set(0.75);
+          // } else {
+          //   leftMotor.set(0.75);
+          //   rightMotor.set(-0.75);
+          // }
+          double motorSpeed = pid.calculate(elevatorEncoder.getDistance(), targetHeight);
+          leftMotor.set(motorSpeed);
+          rightMotor.set(motorSpeed);
+
         });
   }
 
   public Command goToAlgae(int level) {
     // Check for valid args
-    if (level < 1 || level >= algaeHeights.length)
+    if (level < 1 || level >= levelHeights.length)
       return run(() -> {
       });
 
     // Determine associated height needed to be travelled to
-    double targetHeight = algaeHeights[level];
+    double targetHeight = levelHeights[level];
     return run(
         () -> {
-          if (elevatorEncoder.getDistance() < targetHeight) {
-            leftMotor.set(-0.75);
-            rightMotor.set(0.75);
-          } else {
-            leftMotor.set(0.75);
-            rightMotor.set(-0.75);
-          }
+          System.out.println(kP);
+          System.out.println(kI);
+          System.out.println(kD);
+          // if (elevatorEncoder.getDistance() < targetHeight) {
+          //   leftMotor.set(-0.75);
+          //   rightMotor.set(0.75);
+          // } else {
+          //   leftMotor.set(0.75);
+          //   rightMotor.set(-0.75);
+          // }
+          double motorSpeed = pid.calculate(elevatorEncoder.getDistance(), targetHeight);
+          leftMotor.set(motorSpeed);
+          rightMotor.set(-motorSpeed);
+
         });
       }
 
@@ -149,6 +189,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     // System.out.println(encoderVal);
     // cancelElevator = buttons.button(10).getAsBoolean();
     // System.out.println(cancelElevator);
+
+    
   }
 
   @Override
