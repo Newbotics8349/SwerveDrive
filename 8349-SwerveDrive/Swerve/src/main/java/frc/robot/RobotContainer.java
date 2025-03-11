@@ -75,8 +75,8 @@ public class RobotContainer {
 
         // * Configure sticks to drive the robot in TeleOp
         SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                () -> m_driverController.getLeftY() * -1,
-                () -> m_driverController.getLeftX() * -1)
+                () -> Math.pow(m_driverController.getLeftY(), 1.4) * -1,
+                () -> Math.pow(m_driverController.getLeftX(), 1.4) * -1)
                 .withControllerRotationAxis(m_driverController::getRightX)
                 .deadband(OperatorConstants.DEADBAND)
                 .scaleTranslation(0.8)
@@ -119,17 +119,18 @@ public class RobotContainer {
 
         // Algae half levels
 
-        buttons.button(9).whileTrue(elevator.reset()).onFalse(elevator.stop());
-        buttons.button(8).whileTrue(elevator.goToLevel(0)).onFalse(elevator.stop());
+        buttons.button(1).whileTrue(elevator.reset()).onFalse(elevator.stop());
         buttons.button(4).whileTrue(elevator.goToLevel(1)).onFalse(elevator.stop());
+        buttons.button(4).whileTrue(claw.wristReef()).onFalse(claw.stopWrist());
         buttons.button(7).whileTrue(elevator.goToLevel(2)).onFalse(elevator.stop());
-        buttons.button(1).whileTrue(elevator.goToLevel(3)).onFalse(elevator.stop());
-        buttons.button(10).whileTrue(claw.wristFloor()).onFalse(claw.stopWrist());
-        buttons.button(11).whileTrue(claw.wristReef()).onFalse(claw.stopWrist());
+        buttons.button(7).whileTrue(claw.wristReef()).onFalse(claw.stopWrist());
+        buttons.button(9).whileTrue(cage.raiseCage()).onFalse(cage.stopCage());
+        buttons.button(10).whileTrue(claw.wristReef()).onFalse(claw.stopWrist());
+        buttons.button(11).whileTrue(claw.wristFloor()).onFalse(claw.stopWrist());
         buttons.button(12).whileTrue(claw.wristNet()).onFalse(claw.stopWrist());
         buttons2.button(1).whileTrue(intakeOuttake.clawIn()).onFalse(intakeOuttake.clawStop());
         buttons2.button(2).whileTrue(intakeOuttake.clawOut()).onFalse(intakeOuttake.clawStop());
-        buttons2.button(3).whileTrue(cage.raiseCage()).onFalse(cage.stopCage());
+        buttons2.button(3).whileTrue(elevator.goToLevel(0));
     }
 
     /**

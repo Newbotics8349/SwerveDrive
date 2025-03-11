@@ -7,16 +7,22 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClawSubsystem extends SubsystemBase {
+  double kP, kI, kD;
   /** Creates a new ClawSubsystem. */
   public ClawSubsystem() {
+    kP = 0;
+    kI = 0;
+    kD = 0;
   }
+
+  PIDController pid = new PIDController(kP, kI, kD);
 
   SparkMax wristMotor = new SparkMax(60, MotorType.kBrushless);
   DutyCycleEncoder wristEncoder = new DutyCycleEncoder(4, 360.0, 0);

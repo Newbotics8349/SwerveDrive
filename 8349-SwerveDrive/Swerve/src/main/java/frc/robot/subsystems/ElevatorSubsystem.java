@@ -33,7 +33,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   // * Constants for moving elevator to required heights
   private final double ticksPerInch = (1.0 / 256.0);
   // Heights are relative to the end-effector at it's zero position
-  private final double levelHeights[] = { 1, 8, 20, 34};
+  private final double levelHeights[] = { 1, 8, 20, 33};
   double setpoint;
   double measurement;
   private PIDController pid;
