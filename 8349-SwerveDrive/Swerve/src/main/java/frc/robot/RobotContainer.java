@@ -10,7 +10,6 @@ import frc.robot.commands.DriveForwards;
 import frc.robot.commands.ElevatorUpCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.WinchSetup;
-import frc.robot.commands.moveElbowOut;
 import frc.robot.subsystems.AprilTagSubsystem;
 
 import frc.robot.subsystems.ClawSubsystem;
@@ -128,32 +127,18 @@ public class RobotContainer {
         // targetsSeen.onFalse(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
 
         // Algae half levels
-        buttons.button(1).whileTrue(elevator.goToAlgae(2)).onFalse(elevator.stop());
-        buttons.button(2).whileTrue(elevator.goToAlgae(1)).onFalse(elevator.stop());
 
-        // // Elevator buttons
-        // buttons.button(1).whileTrue(elevator.goToLevel(4)).onFalse(elevator.stop());
-        // buttons.button(2).whileTrue(elevator.goToLevel(3)).onFalse(elevator.stop());
-        // buttons.button(3).whileTrue(elevator.goToLevel(2)).onFalse(elevator.stop());
-
-        // // Cage climb
-        // buttons.button(4).whileTrue(cage.raiseCage()).onFalse(cage.stopCage());
-
-        // // Claw stuff
-        // buttons.button(7).whileTrue(claw.wristLX()).onFalse(claw.stopWrist());
-        // buttons.button(8).whileTrue(claw.wristProcessor()).onFalse(claw.stopWrist());
-        // buttons.button(9).whileTrue(claw.wristAlgae()).onFalse(claw.stopWrist());
-        // buttons.button(10).whileTrue(claw.wristL4()).onFalse(claw.stopWrist());
-
-        // buttons.button(11).whileTrue(claw.wristIntake()).onFalse(claw.stopWrist());
-
-        // buttons.button(12).whileTrue(claw.clawElbowRotateUp());
-
-        // // Claw intake / outtake
-        // buttons2.button(1).whileTrue(claw.clawIn()).onFalse(claw.clawStop());
-        // buttons2.button(2).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
-
-        // buttons2.button(3).whileTrue(elevator.reset());
+        buttons.button(9).whileTrue(elevator.reset()).onFalse(elevator.stop());
+        buttons.button(8).whileTrue(elevator.goToLevel(0)).onFalse(elevator.stop());
+        buttons.button(4).whileTrue(elevator.goToLevel(1)).onFalse(elevator.stop());
+        buttons.button(7).whileTrue(elevator.goToLevel(2)).onFalse(elevator.stop());
+        buttons.button(1).whileTrue(elevator.goToLevel(3)).onFalse(elevator.stop());
+        buttons.button(10).whileTrue(claw.wristFloor()).onFalse(claw.stopWrist());
+        buttons.button(11).whileTrue(claw.wristReef()).onFalse(claw.stopWrist());
+        buttons.button(12).whileTrue(claw.wristNet()).onFalse(claw.stopWrist());
+        buttons2.button(1).whileTrue(claw.clawIn()).onFalse(claw.clawStop());
+        buttons2.button(2).whileTrue(claw.clawOut()).onFalse(claw.clawStop());
+        buttons2.button(3).whileTrue(cage.raiseCage()).onFalse(cage.stopCage());
     }
 
     /**
@@ -165,7 +150,6 @@ public class RobotContainer {
         return new SequentialCommandGroup(
             new ParallelCommandGroup(
                 // new WinchSetup(cage),
-                new moveElbowOut(claw),
                 new DriveForwards(drivebase)
             )
             // new ElevatorUpCommand(elevator)

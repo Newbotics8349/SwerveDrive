@@ -37,5 +37,5 @@ public final class Constants {
 
   // Speeds for claw intake/expell
   public static final double clawInSpeed = 0.4;
-  public static final double clawOutSpeed = clawInSpeed;
+  public static final double clawOutSpeed = 0.8;
 }

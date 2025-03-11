@@ -108,7 +108,6 @@ public class SwerveSubsystem extends SubsystemBase {
       }
       
       SmartDashboard.putNumber("Gyro Heading", gyro.getAngle());  // Correct method for heading
-      System.out.println("Gyro Heading: " + gyro.getAngle());  // Optional debug print for terminal
     } else {
       SmartDashboard.putString("Gyro Status", "Not Connected");
     }

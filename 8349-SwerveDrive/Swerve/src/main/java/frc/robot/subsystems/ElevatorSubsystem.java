@@ -41,8 +41,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   // * Constants for moving elevator to required heights
   private final double ticksPerInch = (1.0 / 256.0);
   // Heights are relative to the end-effector at it's zero position
-  private final double levelHeights[] = { 0, 6, 10, 15, 22 };
-  private final double algaeHeights[] = { 0, 12, 17 };
+  private final double levelHeights[] = { 1, 8, 20, 34};
+  double setpoint;
+  double measurement;
   private PIDController pid;
   CommandGenericHID buttons = new CommandGenericHID(0);
   boolean cancelElevator = false;
@@ -50,32 +51,20 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public ElevatorSubsystem() {
     // Set the conversion factor so meaningful distance values are available
-    kP = 0;
+    kP = 0.075;
     kI = 0;
-    kD = 0;
+    kD = 0.01;
 
     elevatorEncoder = new Encoder(0, 1, false, EncodingType.k4X);
     elevatorEncoder.setDistancePerPulse(ticksPerInch);
 
     pid = new PIDController(kP, kI, kD);
 
-    Shuffleboard.getTab("PID Tuning")
-        .add("P Value", kP)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", -1.0, "max", 1.0)) // specify widget properties here
-        .getEntry();
+    SmartDashboard.putNumber("setpoint", 0);
+    SmartDashboard.putNumber("measurement", 0);
 
-    Shuffleboard.getTab("PID Tuning")
-        .add("I Value", kI)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", -1.0, "max", 1.0)) // specify widget properties here
-        .getEntry();
+    SmartDashboard.putData(pid);
 
-    Shuffleboard.getTab("PID Tuning")
-        .add("D Value", kD)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", -1.0, "max", 1.0)) // specify widget properties here
-        .getEntry();
   }
 
   public double getElevatorDistance() {
@@ -84,7 +73,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public Command goToLevel(int level) {
     // Check for valid args
-    if (level < 1 || level >= levelHeights.length)
+    if (level < 0 || level >= levelHeights.length)
       return run(() -> {
       });
 
@@ -100,38 +89,11 @@ public class ElevatorSubsystem extends SubsystemBase {
           //   rightMotor.set(-0.75);
           // }
           double motorSpeed = pid.calculate(elevatorEncoder.getDistance(), targetHeight);
-          leftMotor.set(motorSpeed);
+          leftMotor.set(-motorSpeed);
           rightMotor.set(motorSpeed);
 
         });
   }
-
-  public Command goToAlgae(int level) {
-    // Check for valid args
-    if (level < 1 || level >= levelHeights.length)
-      return run(() -> {
-      });
-
-    // Determine associated height needed to be travelled to
-    double targetHeight = levelHeights[level];
-    return run(
-        () -> {
-          System.out.println(kP);
-          System.out.println(kI);
-          System.out.println(kD);
-          // if (elevatorEncoder.getDistance() < targetHeight) {
-          //   leftMotor.set(-0.75);
-          //   rightMotor.set(0.75);
-          // } else {
-          //   leftMotor.set(0.75);
-          //   rightMotor.set(-0.75);
-          // }
-          double motorSpeed = pid.calculate(elevatorEncoder.getDistance(), targetHeight);
-          leftMotor.set(motorSpeed);
-          rightMotor.set(-motorSpeed);
-
-        });
-      }
 
   public Command stop() {
     return runOnce(
@@ -190,7 +152,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // cancelElevator = buttons.button(10).getAsBoolean();
     // System.out.println(cancelElevator);
 
-    
+    SmartDashboard.putNumber("ElevatorDistance", elevatorEncoder.getDistance());
   }
 
   @Override
