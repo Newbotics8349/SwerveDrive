@@ -23,7 +23,7 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
-    public static final double DEADBAND = 0.05;
+    public static final double DEADBAND = 0.04;
   }
 
   public static final double maxSpeed = Units.feetToMeters(9);
@@ -36,6 +36,6 @@ public final class Constants {
       new Rotation2d(0));
 
   // Speeds for claw intake/expell
-  public static final double clawInSpeed = 0.4;
-  public static final double clawOutSpeed = 0.8;
+  public static final double clawInSpeed = 0.25;
+  public static final double clawOutSpeed = clawInSpeed;
 }

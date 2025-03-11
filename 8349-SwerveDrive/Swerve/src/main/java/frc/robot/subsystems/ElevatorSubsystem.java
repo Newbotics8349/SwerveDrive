@@ -33,7 +33,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   // * Constants for moving elevator to required heights
   private final double ticksPerInch = (1.0 / 256.0);
   // Heights are relative to the end-effector at it's zero position
-  private final double levelHeights[] = { 1, 8, 20, 33};
+  private final double levelHeights[] = { 0.5, 8, 20, 33};
   double setpoint;
   double measurement;
   private PIDController pid;
@@ -54,8 +54,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("setpoint", 0);
     SmartDashboard.putNumber("measurement", 0);
-
-    SmartDashboard.putData(pid);
 
   }
 
@@ -110,20 +108,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   public Command reset() {
     return run(
         () -> {
-          System.out.println(lSwitch.get());
           if (!lSwitch.get()) 
             leftMotor.set(0.15);
             rightMotor.set(-0.15);
           }
         );
-  }
-
-  public Command lswitch() {
-    return runOnce(
-      () -> {
-        System.out.println(atZero());
-      }
-    );
   }
 
   // Limit switch condition

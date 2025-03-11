@@ -16,6 +16,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AprilTagSubsystem extends SubsystemBase {
   private PhotonCamera camera;
@@ -34,6 +35,7 @@ public class AprilTagSubsystem extends SubsystemBase {
   }
 
   public List<PhotonTrackedTarget> getTargets() {
+    SmartDashboard.putString("Targets", tagsTracked.toString());
     return tagsTracked;
   }
 

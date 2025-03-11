@@ -15,14 +15,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClawSubsystem extends SubsystemBase {
   double kP, kI, kD;
+  PIDController pid;
   /** Creates a new ClawSubsystem. */
   public ClawSubsystem() {
-    kP = 0;
+    kP = 0.005;
     kI = 0;
-    kD = 0;
+    kD = 0.0003; 
+    pid = new PIDController(kP, kI, kD);
   }
 
-  PIDController pid = new PIDController(kP, kI, kD);
+
+  
 
   SparkMax wristMotor = new SparkMax(60, MotorType.kBrushless);
   DutyCycleEncoder wristEncoder = new DutyCycleEncoder(4, 360.0, 0);
@@ -44,37 +47,22 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command wristFloor() {
     return run(() -> {
-      if (wristEncoder.get() < 82) {
-        wristMotor.set(0.07);
-      } else if (wristEncoder.get() > 92) {
-        wristMotor.set(-0.07);
-      } else {
-        wristMotor.set(0);
-      }
+      double motorSpeed = pid.calculate(wristEncoder.get(), 80);
+      wristMotor.set(motorSpeed);
     });
   }
 
   public Command wristReef() {
     return run(() -> {
-      if (wristEncoder.get() < 138) {
-        wristMotor.set(0.07);
-      } else if (wristEncoder.get() > 148) {
-        wristMotor.set(-0.07);
-      } else {
-        wristMotor.set(0);
-      }
+      double motorSpeed = pid.calculate(wristEncoder.get(), 138);
+      wristMotor.set(motorSpeed);
     });
   }
 
-  public Command wristNet() {
+  public Command wristProcessor() {
     return run(() -> {
-      if (wristEncoder.get() < 192) {
-        wristMotor.set(0.07);
-      } else if (wristEncoder.get() > 202) {
-        wristMotor.set(-0.07);
-      } else {
-        wristMotor.set(0);
-      }
+      double motorSpeed = pid.calculate(wristEncoder.get(), 120);
+      wristMotor.set(motorSpeed);
     });
   }
 
