@@ -5,13 +5,12 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.CageSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import com.ctre.phoenix.time.StopWatch;
 
 /** An example command that uses an example subsystem. */
 public class WinchSetup extends Command {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField", "unused"})
+  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final CageSubsystem m_subsystem;
   private StopWatch stopWatch = new StopWatch();
 

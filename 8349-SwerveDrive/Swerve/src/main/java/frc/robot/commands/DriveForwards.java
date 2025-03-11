@@ -11,7 +11,7 @@ import com.ctre.phoenix.time.StopWatch;
 
 /** An example command that uses an example subsystem. */
 public class DriveForwards extends Command {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField", "unused"})
+  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final SwerveSubsystem m_subsystem;
   private StopWatch stopWatch = new StopWatch();
 

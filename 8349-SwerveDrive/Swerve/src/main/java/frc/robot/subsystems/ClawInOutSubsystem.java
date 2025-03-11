@@ -4,41 +4,21 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+
+import frc.robot.Constants;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import 
-edu.wpi.first.wpilibj.motorcontrol.Spark;
 
-public class CageSubsystem extends SubsystemBase {
-  /** Creates a new ExampleSubsystem. */
-  public CageSubsystem() {}
-
-
-  Spark cageMotor = new Spark(8);
-
-  public void setupAutoCage() {
-    cageMotor.set(-0.5);
+public class ClawInOutSubsystem extends SubsystemBase {
+  /** Creates a new ClawSubsystem. */
+  public ClawInOutSubsystem() {
   }
 
-  public void stopAutoCage() {
-    cageMotor.set(0);
-  }
-
-  public Command raiseCage(){
-    return run(() -> {
-      // cageMotor.setVoltage(12);
-      // System.out.println(cageMotor.getVoltage());
-      cageMotor.set(-1);
-    });
-  }
-
-  public Command stopCage() {
-    return runOnce(
-      () -> {
-        cageMotor.set(0);
-      }
-    );
-  }
+  SparkMax motor41 = new SparkMax(41, MotorType.kBrushless);
+  SparkMax motor42 = new SparkMax(42, MotorType.kBrushless);
 
   /**
    * Example command factory method.
@@ -54,8 +34,30 @@ public class CageSubsystem extends SubsystemBase {
         });
   }
 
+  public Command clawIn() {
+    return run(() -> {
+      motor41.set(-1 * Constants.clawInSpeed);
+      motor42.set(Constants.clawInSpeed);
+    });
+  }
+
+  public Command clawOut() {
+    return run(() -> {
+      motor41.set(Constants.clawOutSpeed);
+      motor42.set(-1 * Constants.clawOutSpeed);
+    });
+  }
+
+  public Command clawStop() {
+    return run(() -> {
+      motor41.set(0);
+      motor42.set(0);
+    });
+  }
+
   /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
+   * An example method querying a boolean state of the subsystem (for example, a
+   * digital sensor).
    *
    * @return value of some boolean subsystem state, such as a digital sensor.
    */

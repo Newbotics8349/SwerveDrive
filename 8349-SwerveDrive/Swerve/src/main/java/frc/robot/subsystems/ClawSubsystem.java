@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import frc.robot.Constants;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,8 +18,6 @@ public class ClawSubsystem extends SubsystemBase {
   public ClawSubsystem() {
   }
 
-  SparkMax motor41 = new SparkMax(41, MotorType.kBrushless);
-  SparkMax motor42 = new SparkMax(42, MotorType.kBrushless);
   SparkMax wristMotor = new SparkMax(60, MotorType.kBrushless);
   DutyCycleEncoder wristEncoder = new DutyCycleEncoder(4, 360.0, 0);
   double wristValue;
@@ -37,27 +34,6 @@ public class ClawSubsystem extends SubsystemBase {
         () -> {
           /* one-time action goes here */
         });
-  }
-
-  public Command clawIn() {
-    return run(() -> {
-      motor41.set(-1 * Constants.clawInSpeed);
-      motor42.set(Constants.clawInSpeed);
-    });
-  }
-
-  public Command clawOut() {
-    return run(() -> {
-      motor41.set(Constants.clawOutSpeed);
-      motor42.set(-1 * Constants.clawOutSpeed);
-    });
-  }
-
-  public Command clawStop() {
-    return run(() -> {
-      motor41.set(0);
-      motor42.set(0);
-    });
   }
 
   public Command wristFloor() {

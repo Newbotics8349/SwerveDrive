@@ -10,22 +10,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix.motorcontrol.GroupMotorControllers;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import java.util.Map;
-
-import edu.wpi.first.wpilibj.SPI;
 
 import com.ctre.phoenix.time.StopWatch;
 
@@ -146,11 +138,6 @@ public class ElevatorSubsystem extends SubsystemBase {
       elevatorEncoder.reset();
       leftMotor.set(0);
       rightMotor.set(0);
-
-    double encoderVal = elevatorEncoder.getDistance();
-    // System.out.println(encoderVal);
-    // cancelElevator = buttons.button(10).getAsBoolean();
-    // System.out.println(cancelElevator);
 
     SmartDashboard.putNumber("ElevatorDistance", elevatorEncoder.getDistance());
   }
