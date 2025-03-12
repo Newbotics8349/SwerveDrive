@@ -94,6 +94,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         });
   }
 
+  public void stopAuto() {
+    leftMotor.set(0);
+    rightMotor.set(0);
+  }
+
   // For driving with an axis for debug
   public Command setElevatorSpeed(DoubleSupplier speedFunc) {
     // Scale the speed from the controller axis
@@ -119,6 +124,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   // Limit switch condition
   public boolean atZero() {
     return lSwitch.get();
+  }
+
+  public boolean atTarget(double target) {
+    return elevatorEncoder.getDistance() < target + 0.5 && elevatorEncoder.getDistance() > target - 0.5;
   }
 
   @Override

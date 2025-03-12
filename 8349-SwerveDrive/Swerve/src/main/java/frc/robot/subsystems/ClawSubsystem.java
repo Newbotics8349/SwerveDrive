@@ -20,7 +20,7 @@ public class ClawSubsystem extends SubsystemBase {
   public ClawSubsystem() {
     kP = 0.005;
     kI = 0;
-    kD = 0.0003; 
+    kD = 0.0002; 
     pid = new PIDController(kP, kI, kD);
   }
 
@@ -71,17 +71,19 @@ public class ClawSubsystem extends SubsystemBase {
     wristMotor.set(motorSpeed);
   }
   
-  public Command wristPrepAuto() {
-    return run(() -> {
-      double motorSpeed = pid.calculate(wristEncoder.get(), 138);
-      wristMotor.set(motorSpeed);
-    });
+  public void wristPrepAuto() {
+    double motorSpeed = -0.1;
+    wristMotor.set(motorSpeed);
   }
 
   public Command stopWrist() {
     return run(() -> {
       wristMotor.set(0);
     });
+  }
+
+  public void stopWristAuto() {
+    wristMotor.set(0);
   }
 
   public boolean getPosition(double target) {

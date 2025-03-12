@@ -10,7 +10,7 @@ import frc.robot.subsystems.AprilTagSubsystem;
 import frc.robot.commands.CoralClawCommand;
 import frc.robot.commands.ClawPrepCommand;
 import frc.robot.commands.CoralOutCommand;
-
+import frc.robot.commands.ElevatorStayCommand;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.CageSubsystem;
 import frc.robot.subsystems.ClawInOutSubsystem;
@@ -148,8 +148,9 @@ public class RobotContainer {
         timer.start();
         return new SequentialCommandGroup(
             new ClawPrepCommand(claw),
+            new ElevatorUpCommand(elevator),
             new ParallelCommandGroup(
-                new ElevatorUpCommand(elevator),
+                new ElevatorStayCommand(elevator),
                 new CoralClawCommand(claw),
                 new CoralOutCommand(intakeOuttake)
             )
