@@ -5,6 +5,9 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.ElevatorSubsystem;
+
+import com.ctre.phoenix.time.StopWatch;
+
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
@@ -17,23 +20,23 @@ public class ElevatorUpCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
+    StopWatch timer = new StopWatch();
+
   public ElevatorUpCommand(ElevatorSubsystem subsystem) {
     elevatorSubsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
-
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    timer.start();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("running");
-    while (elevatorSubsystem.getElevatorDistance() < 10) {
-      elevatorSubsystem.goToLevel(2);
-    }
+    elevatorSubsystem.goToLevelAuto(9);
   }
 
   // Called once the command ends or is interrupted.
@@ -46,6 +49,7 @@ public class ElevatorUpCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return elevatorSubsystem.getElevatorDistance() > 9;
+    
+    return timer.getDuration() > 7;
   }
 }

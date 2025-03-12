@@ -71,18 +71,19 @@ public class ElevatorSubsystem extends SubsystemBase {
     double targetHeight = levelHeights[level];
     return run(
         () -> {
-          // if (elevatorEncoder.getDistance() < targetHeight) {
-          //   leftMotor.set(-0.75);
-          //   rightMotor.set(0.75);
-          // } else {
-          //   leftMotor.set(0.75);
-          //   rightMotor.set(-0.75);
-          // }
           double motorSpeed = pid.calculate(elevatorEncoder.getDistance(), targetHeight);
           leftMotor.set(-motorSpeed);
           rightMotor.set(motorSpeed);
 
         });
+  }
+
+  public void goToLevelAuto(double targetHeight) {
+
+    // Determine associated height needed to be travelled to
+    double motorSpeed = pid.calculate(elevatorEncoder.getDistance(), targetHeight);
+    leftMotor.set(-motorSpeed);
+    rightMotor.set(motorSpeed);
   }
 
   public Command stop() {

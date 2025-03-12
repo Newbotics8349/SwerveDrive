@@ -5,8 +5,11 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.DriveForwards;
+import frc.robot.commands.ElevatorUpCommand;
 import frc.robot.subsystems.AprilTagSubsystem;
+import frc.robot.commands.CoralClawCommand;
+import frc.robot.commands.ClawPrepCommand;
+import frc.robot.commands.CoralOutCommand;
 
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.CageSubsystem;
@@ -15,6 +18,9 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
+
+import com.ctre.phoenix.time.StopWatch;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -138,12 +144,15 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
+        StopWatch timer = new StopWatch();
+        timer.start();
         return new SequentialCommandGroup(
+            new ClawPrepCommand(claw),
             new ParallelCommandGroup(
-                // new WinchSetup(cage),
-                new DriveForwards(drivebase)
+                new ElevatorUpCommand(elevator),
+                new CoralClawCommand(claw),
+                new CoralOutCommand(intakeOuttake)
             )
-            // new ElevatorUpCommand(elevator)
         );
         // return Commands.run(
         //     () -> 

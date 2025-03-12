@@ -4,22 +4,20 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.CageSubsystem;
+import frc.robot.subsystems.ClawSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
-import com.ctre.phoenix.time.StopWatch;
 
 /** An example command that uses an example subsystem. */
-public class WinchSetup extends Command {
+public class ClawPrepCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final CageSubsystem m_subsystem;
-  private StopWatch stopWatch = new StopWatch();
+  private final ClawSubsystem m_subsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public WinchSetup(CageSubsystem subsystem) {
+  public ClawPrepCommand(ClawSubsystem subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -27,25 +25,23 @@ public class WinchSetup extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    stopWatch.start();
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.setupAutoCage();
+    m_subsystem.wristPrepAuto();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.stopAutoCage();
+    m_subsystem.stopWrist();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return stopWatch.getDuration() > 0.4;
+    return m_subsystem.getPosition(138);
   }
 }

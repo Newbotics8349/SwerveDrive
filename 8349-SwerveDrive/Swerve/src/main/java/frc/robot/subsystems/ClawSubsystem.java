@@ -66,10 +66,26 @@ public class ClawSubsystem extends SubsystemBase {
     });
   }
 
+  public void wristCoralOutAuto() {
+    double motorSpeed = pid.calculate(wristEncoder.get(), 120);
+    wristMotor.set(motorSpeed);
+  }
+  
+  public Command wristPrepAuto() {
+    return run(() -> {
+      double motorSpeed = pid.calculate(wristEncoder.get(), 138);
+      wristMotor.set(motorSpeed);
+    });
+  }
+
   public Command stopWrist() {
     return run(() -> {
       wristMotor.set(0);
     });
+  }
+
+  public boolean getPosition(double target) {
+    return wristEncoder.get() < target + 2 && wristEncoder.get() > target - 2;
   }
 
   /**
