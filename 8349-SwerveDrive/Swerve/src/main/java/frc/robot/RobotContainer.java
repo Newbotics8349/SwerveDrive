@@ -87,7 +87,6 @@ public class RobotContainer {
                 .deadband(OperatorConstants.DEADBAND)
                 .scaleTranslation(0.8)
                 .allianceRelativeControl(true);
-
         // SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
         //         .withControllerHeadingAxis(m_driverController::getRightX,
         //                 m_driverController::getRightY)
@@ -125,6 +124,7 @@ public class RobotContainer {
         // Algae half levels
 
         buttons.button(1).whileTrue(elevator.reset()).onFalse(elevator.stop());
+        buttons.button(3).whileTrue(claw.wristDefence()).onFalse(claw.stopWrist());
         buttons.button(4).whileTrue(elevator.goToLevel(1)).onFalse(elevator.stop());
         buttons.button(4).whileTrue(claw.wristReef()).onFalse(claw.stopWrist());
         buttons.button(7).whileTrue(elevator.goToLevel(2)).onFalse(elevator.stop());
