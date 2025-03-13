@@ -89,6 +89,11 @@ public class ClawSubsystem extends SubsystemBase {
     });
   }
 
+  public void wristDefenceError() {
+    double motorSpeed = pid.calculate(wristEncoder.get(), 200);
+    wristMotor.set(motorSpeed);
+  }
+
   public void stopWristAuto() {
     wristMotor.set(0);
   }

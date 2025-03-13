@@ -86,6 +86,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightMotor.set(motorSpeed);
   }
 
+  public void resetAuto() {
+    leftMotor.set(0.15);
+    rightMotor.set(-0.15);
+  }
+
   public Command stop() {
     return runOnce(
         () -> {

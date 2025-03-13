@@ -6,9 +6,12 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ElevatorUpCommand;
+import frc.robot.commands.ResetCommand;
+import frc.robot.commands.TimeCommand;
 import frc.robot.commands.TurnCommand;
 import frc.robot.subsystems.AprilTagSubsystem;
 import frc.robot.commands.CoralClawCommand;
+import frc.robot.commands.ClawDefence;
 import frc.robot.commands.ClawPrepCommand;
 import frc.robot.commands.CoralOutCommand;
 import frc.robot.commands.DriveForwards;
@@ -23,7 +26,6 @@ import swervelib.SwerveInputStream;
 
 import com.ctre.phoenix.time.StopWatch;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -139,7 +141,7 @@ public class RobotContainer {
         buttons.button(4).whileTrue(elevator.goToLevel(0)).onFalse(elevator.stop());
         buttons.button(4).whileTrue(claw.wristProcessor()).onFalse(claw.stopWrist());
 
-        // m_driverController.a().whileTrue(drivebase.followPathCommand(2.8, 0, Rotation2d.fromDegrees(180)));
+        m_driverController.a().whileTrue(new SequentialCommandGroup(new TimeCommand(), new ResetCommand(elevator), new ClawDefence(claw)));
     }
 
     /**
