@@ -6,10 +6,12 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ElevatorUpCommand;
+import frc.robot.commands.TurnCommand;
 import frc.robot.subsystems.AprilTagSubsystem;
 import frc.robot.commands.CoralClawCommand;
 import frc.robot.commands.ClawPrepCommand;
 import frc.robot.commands.CoralOutCommand;
+import frc.robot.commands.DriveForwards;
 import frc.robot.commands.ElevatorStayCommand;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.CageSubsystem;
@@ -21,6 +23,7 @@ import swervelib.SwerveInputStream;
 
 import com.ctre.phoenix.time.StopWatch;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -57,8 +60,7 @@ public class RobotContainer {
     private final CommandXboxController m_driverController = new CommandXboxController(
             OperatorConstants.kDriverControllerPort);
 
-    CommandGenericHID buttons = new CommandGenericHID(2);
-    CommandGenericHID buttons2 = new CommandGenericHID(1);
+    CommandGenericHID buttons = new CommandGenericHID(1);
 
     // * Define objects for autonomous routine selection
     // private final SendableChooser<Command> autoSelector =
@@ -75,7 +77,7 @@ public class RobotContainer {
         // // Populate autonomous routine selection with available routines
         // autoSelector.setDefaultOption(newmarketAuto,
         // AutoBuilder.buildAuto(newmarketAuto));
-        // // Make autonomous routine selector available on the smart dashboard
+        // // Make autonomous routine selector available on the smart diashboard
         // SmartDashboard.putData("Auto choices", autoSelector);
         SmartDashboard.putData(elevator);
 
@@ -119,24 +121,25 @@ public class RobotContainer {
         Trigger targetsSeen = new Trigger(vision::hasTargets);
         targetsSeen.debounce(0.1);
         targetsSeen.onTrue(leds.debugMode(vision));
-        // targetsSeen.onFalse(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
+        // targetsSeen.onFalsde(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
 
         // Algae half levels
 
-        buttons.button(1).whileTrue(elevator.reset()).onFalse(elevator.stop());
-        buttons.button(3).whileTrue(claw.wristDefence()).onFalse(claw.stopWrist());
-        buttons.button(4).whileTrue(elevator.goToLevel(1)).onFalse(elevator.stop());
-        buttons.button(4).whileTrue(claw.wristReef()).onFalse(claw.stopWrist());
-        buttons.button(7).whileTrue(elevator.goToLevel(2)).onFalse(elevator.stop());
-        buttons.button(7).whileTrue(claw.wristReef()).onFalse(claw.stopWrist());
-        buttons.button(9).whileTrue(cage.raiseCage()).onFalse(cage.stopCage());
+        buttons.button(12).whileTrue(elevator.reset()).onFalse(elevator.stop());
+        buttons.button(11).whileTrue(elevator.goToLevel(1)).onFalse(elevator.stop());
+        buttons.button(11).whileTrue(claw.wristReef()).onFalse(claw.stopWrist());
+        buttons.button(10).whileTrue(elevator.goToLevel(2)).onFalse(elevator.stop());
         buttons.button(10).whileTrue(claw.wristReef()).onFalse(claw.stopWrist());
-        buttons.button(11).whileTrue(claw.wristFloor()).onFalse(claw.stopWrist());
-        buttons.button(11).whileTrue(elevator.goToLevel(0)).onFalse(elevator.stop());
-        buttons.button(12).whileTrue(claw.wristProcessor()).onFalse(claw.stopWrist());
-        buttons.button(12).whileTrue(elevator.goToLevel(0)).onFalse(elevator.stop());
-        buttons2.button(1).whileTrue(intakeOuttake.clawIn()).onFalse(intakeOuttake.clawStop());
-        buttons2.button(2).whileTrue(intakeOuttake.clawOut()).onFalse(intakeOuttake.clawStop());
+        buttons.button(9).whileTrue(intakeOuttake.clawIn()).onFalse(intakeOuttake.clawStop());
+        buttons.button(8).whileTrue(elevator.goToLevel(0)).onFalse(elevator.stop());
+        buttons.button(8).whileTrue(claw.wristFloor()).onFalse(claw.stopWrist());
+        buttons.button(7).whileTrue(intakeOuttake.clawOut()).onFalse(intakeOuttake.clawStop());
+        buttons.button(6).whileTrue(cage.raiseCage()).onFalse(cage.stopCage());
+        buttons.button(5).whileTrue(claw.wristDefence()).onFalse(claw.stopWrist());
+        buttons.button(4).whileTrue(elevator.goToLevel(0)).onFalse(elevator.stop());
+        buttons.button(4).whileTrue(claw.wristProcessor()).onFalse(claw.stopWrist());
+
+        // m_driverController.a().whileTrue(drivebase.followPathCommand(2.8, 0, Rotation2d.fromDegrees(180)));
     }
 
     /**
@@ -148,6 +151,8 @@ public class RobotContainer {
         StopWatch timer = new StopWatch();
         timer.start();
         return new SequentialCommandGroup(
+            new TurnCommand(drivebase),
+            new DriveForwards(drivebase, 1),
             new ClawPrepCommand(claw),
             new ElevatorUpCommand(elevator),
             new ParallelCommandGroup(

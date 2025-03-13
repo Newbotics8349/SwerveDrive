@@ -48,9 +48,10 @@ public class ClawInOutSubsystem extends SubsystemBase {
     });
   }
 
+  
   public void coralOutAuto(double speed) {
-    motor41.set(speed);
-    motor42.set(-1 * speed);
+    motor41.set(-1 * speed);
+    motor42.set(speed);
   }
 
   public Command clawStop() {

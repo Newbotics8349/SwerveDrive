@@ -175,4 +175,37 @@ public class SwerveSubsystem extends SubsystemBase {
             return Commands.none();
         }
     }
+    public void followPathCommandAuto(double x, double y, Rotation2d rotation)
+    {
+      try {
+        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+          new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)),
+          new Pose2d(x, y, rotation)
+        );
+        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+  
+        PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0.0, rotation));
+  
+              path.preventFlipping = true;
+  
+              new FollowPathCommand(
+                      path,
+                      swerveDrive::getPose,
+                      swerveDrive::getRobotVelocity,
+                      this::callingDrive,
+                      holoDriveController,
+                      robotConfig,
+                      () -> {
+                          var alliance = DriverStation.getAlliance();
+                          if (alliance.isPresent()) {
+                              return alliance.get() == DriverStation.Alliance.Red;
+                          }
+                          return false;
+                      },
+                      this);
+          } catch (Exception e) {
+              System.out.println("Error");
+              DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+          }
+      }
 }
