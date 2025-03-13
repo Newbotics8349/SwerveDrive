@@ -59,9 +59,9 @@ public class SwerveSubsystem extends SubsystemBase {
                                                                                                Meter.of(4)),
                                                                              Rotation2d.fromDegrees(0)));
       // Alternative method if you don't want to supply the conversion factor via JSON files.
-      // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
+      // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed\, angleConversionFactor, driveConversionFactor);
       robotConfig = RobotConfig.fromGUISettings();
-      holoDriveController = new PPHolonomicDriveController(new PIDConstants(0.1), new PIDConstants(0.1));
+      holoDriveController = new PPHolonomicDriveController(new PIDConstants(0), new PIDConstants(0));
 
     } catch (Exception e)
     {
@@ -141,12 +141,12 @@ public class SwerveSubsystem extends SubsystemBase {
     });
   }
 
-  public Command followPathCommand(double x, double y)
+  public Command followPathCommand(Pose2d endpoint)
   {
     try {
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
         new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)),
-        new Pose2d(x, y, Rotation2d.fromDegrees(0))
+        endpoint
       );
       PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
 

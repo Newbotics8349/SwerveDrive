@@ -34,14 +34,14 @@ public class ClawInOutSubsystem extends SubsystemBase {
         });
   }
 
-  public Command clawIn() {
+  public Command clawOut() {
     return run(() -> {
       motor41.set(-1 * Constants.clawInSpeed);
       motor42.set(Constants.clawInSpeed);
     });
   }
 
-  public Command clawOut() {
+  public Command clawIn() {
     return run(() -> {
       motor41.set(Constants.clawOutSpeed);
       motor42.set(-1 * Constants.clawOutSpeed);

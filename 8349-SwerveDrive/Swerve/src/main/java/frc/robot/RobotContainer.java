@@ -132,10 +132,11 @@ public class RobotContainer {
         buttons.button(9).whileTrue(cage.raiseCage()).onFalse(cage.stopCage());
         buttons.button(10).whileTrue(claw.wristReef()).onFalse(claw.stopWrist());
         buttons.button(11).whileTrue(claw.wristFloor()).onFalse(claw.stopWrist());
+        buttons.button(11).whileTrue(elevator.goToLevel(0)).onFalse(elevator.stop());
         buttons.button(12).whileTrue(claw.wristProcessor()).onFalse(claw.stopWrist());
+        buttons.button(12).whileTrue(elevator.goToLevel(0)).onFalse(elevator.stop());
         buttons2.button(1).whileTrue(intakeOuttake.clawIn()).onFalse(intakeOuttake.clawStop());
         buttons2.button(2).whileTrue(intakeOuttake.clawOut()).onFalse(intakeOuttake.clawStop());
-        buttons2.button(3).whileTrue(elevator.goToLevel(0));
     }
 
     /**
