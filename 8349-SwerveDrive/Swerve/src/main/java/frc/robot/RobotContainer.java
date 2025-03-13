@@ -137,8 +137,6 @@ public class RobotContainer {
         buttons.button(12).whileTrue(elevator.goToLevel(0)).onFalse(elevator.stop());
         buttons2.button(1).whileTrue(intakeOuttake.clawIn()).onFalse(intakeOuttake.clawStop());
         buttons2.button(2).whileTrue(intakeOuttake.clawOut()).onFalse(intakeOuttake.clawStop());
-
-        buttons.button(6).whileTrue(drivebase.followPathCommand(vision.getCameraToTagPose(vision.getTargets())));
     }
 
     /**

@@ -36,7 +36,6 @@ public class AprilTagSubsystem extends SubsystemBase {
   }
 
   public List<PhotonTrackedTarget> getTargets() {
-    System.out.println("Getting targets");
     SmartDashboard.putString("Targets", tagsTracked.toString());
     return tagsTracked;
   }
@@ -67,9 +66,8 @@ public class AprilTagSubsystem extends SubsystemBase {
     return getCameraToTagPose(targets);
   }
 
-  public Pose2d getCameraToTagPose(List<PhotonTrackedTarget> targets) {
-
-    System.out.println("Narrowing targets");
+  public Pose2d getCameraToTagPose(List<PhotonTrackedTarget> targets) { 
+    System.out.println(targets.toString());
     // Get transform from target
     if (targets.size() > 0) {
       PhotonTrackedTarget target = targets.get(0);
