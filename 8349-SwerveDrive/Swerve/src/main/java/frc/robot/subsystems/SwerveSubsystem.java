@@ -143,6 +143,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public Command followPathCommand(Pose2d endpoint)
   {
+    System.out.println("Starting path");
     try {
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
         new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)),
@@ -150,7 +151,7 @@ public class SwerveSubsystem extends SubsystemBase {
       );
       PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
 
-      PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0.0, Rotation2d.fromDegrees(0.0)));
+      PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0.0, endpoint.getRotation()));
 
             path.preventFlipping = true;
 
