@@ -48,6 +48,6 @@ public class CoralClawCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return timer.getDuration() > 7;
+    return timer.getDuration() > 4;
   }
 }

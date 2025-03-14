@@ -11,6 +11,7 @@ import frc.robot.commands.TimeCommand;
 import frc.robot.commands.TurnCommand;
 import frc.robot.subsystems.AprilTagSubsystem;
 import frc.robot.commands.CoralClawCommand;
+import frc.robot.commands.CoralInCommand;
 import frc.robot.commands.ClawDefence;
 import frc.robot.commands.ClawPrepCommand;
 import frc.robot.commands.CoralOutCommand;
@@ -159,11 +160,21 @@ public class RobotContainer {
             new TurnCommand(drivebase),
             new DriveForwards(drivebase, 1),
             new ClawPrepCommand(claw),
-            new ElevatorUpCommand(elevator),
+            new ElevatorUpCommand(elevator, 5),
             new ParallelCommandGroup(
                 new ElevatorStayCommand(elevator),
                 new CoralClawCommand(claw),
                 new CoralOutCommand(intakeOuttake)
+            ),
+            new DriveForwards(drivebase, -0.1),
+            new ParallelCommandGroup(
+                new ElevatorUpCommand(elevator, 20),
+                new ClawPrepCommand(claw)
+            ),
+            new ParallelCommandGroup(
+                new DriveForwards(drivebase, 0.1),
+                new CoralInCommand(intakeOuttake),
+                new ClawPrepCommand(claw)                
             )
         );
         // return Commands.run(

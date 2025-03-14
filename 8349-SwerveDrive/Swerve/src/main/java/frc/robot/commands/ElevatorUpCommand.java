@@ -13,13 +13,16 @@ public class ElevatorUpCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ElevatorSubsystem elevatorSubsystem;
 
+  double distance;
+
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
 
-  public ElevatorUpCommand(ElevatorSubsystem subsystem) {
+  public ElevatorUpCommand(ElevatorSubsystem subsystem, double target) {
+    distance = target;
     elevatorSubsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -31,7 +34,7 @@ public class ElevatorUpCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevatorSubsystem.goToLevelAuto(5);
+    elevatorSubsystem.goToLevelAuto(distance);
   }
 
   // Called once the command ends or is interrupted.
@@ -44,6 +47,6 @@ public class ElevatorUpCommand extends Command {
   @Override
   public boolean isFinished() {
     
-    return elevatorSubsystem.atTarget(5);
+    return elevatorSubsystem.atTarget(distance);
   }
 }

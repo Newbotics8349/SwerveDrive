@@ -49,6 +49,6 @@ public class ElevatorStayCommand extends Command {
   @Override
   public boolean isFinished() {
     
-    return timer.getDuration() > 7;
+    return timer.getDuration() > 4;
   }
 }

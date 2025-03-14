@@ -11,7 +11,7 @@ import com.ctre.phoenix.time.StopWatch;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class CoralOutCommand extends Command {
+public class CoralInCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ClawInOutSubsystem m_subsystem;
 
@@ -21,7 +21,7 @@ public class CoralOutCommand extends Command {
    * @param subsystem The subsystem used by this command.
    */
   StopWatch timer = new StopWatch();
-  public CoralOutCommand(ClawInOutSubsystem subsystem) {
+  public CoralInCommand(ClawInOutSubsystem subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -36,7 +36,7 @@ public class CoralOutCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      m_subsystem.coralOutAuto(0.1);
+      m_subsystem.coralOutAuto(-0.1);
   }
 
   // Called once the command ends or is interrupted.
@@ -49,6 +49,6 @@ public class CoralOutCommand extends Command {
   @Override
   public boolean isFinished() {
     
-    return timer.getDuration() > 4;
+    return timer.getDuration() > 7;
   }
 }
