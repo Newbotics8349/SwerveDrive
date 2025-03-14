@@ -130,6 +130,18 @@ public class SwerveSubsystem extends SubsystemBase {
             swerveDrive.driveFieldOriented(velocity.get());
         });
     }
+  
+    public Command strafeLeft() {
+      double angle = Math.PI * (gyro.getAngle() - 90) / 180;
+      double v = 0.5;
+      return driveFieldOriented(() -> new ChassisSpeeds(v * Math.cos(angle), v * Math.sin(angle), 0));
+    }
+
+    public Command strafeRight() {
+      double angle = Math.PI * (gyro.getAngle() + 90) / 180;
+      double v = 0.5;
+      return driveFieldOriented(() -> new ChassisSpeeds(v * Math.cos(angle), v * Math.sin(angle), 0));
+    }
 
   public void callingDrive(ChassisSpeeds chassisSpeeds, DriveFeedforwards driveFeedforwards) {
     swerveDrive.drive(chassisSpeeds);

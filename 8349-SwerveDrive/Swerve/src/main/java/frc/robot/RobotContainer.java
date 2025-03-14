@@ -141,6 +141,9 @@ public class RobotContainer {
         buttons.button(4).whileTrue(elevator.goToLevel(0)).onFalse(elevator.stop());
         buttons.button(4).whileTrue(claw.wristProcessor()).onFalse(claw.stopWrist());
 
+        m_driverController.leftBumper().whileTrue(drivebase.strafeLeft());
+        m_driverController.rightBumper().whileTrue(drivebase.strafeRight());
+
         m_driverController.a().whileTrue(new SequentialCommandGroup(new TimeCommand(), new ResetCommand(elevator), new ClawDefence(claw)));
     }
 
