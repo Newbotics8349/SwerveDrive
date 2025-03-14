@@ -25,8 +25,6 @@ import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 
-import com.ctre.phoenix.time.StopWatch;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -154,8 +152,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        StopWatch timer = new StopWatch();
-        timer.start();
         return new SequentialCommandGroup(
             new TurnCommand(drivebase),
             new DriveForwards(drivebase, 1),
