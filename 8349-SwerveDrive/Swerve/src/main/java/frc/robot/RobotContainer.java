@@ -143,6 +143,8 @@ public class RobotContainer {
         m_driverController.leftBumper().whileTrue(drivebase.strafeLeft());
         m_driverController.rightBumper().whileTrue(drivebase.strafeRight());
 
+        m_driverController.a().whileTrue(drivebase.resetGyro());
+
         m_driverController.x().whileTrue(drivebase.robotForwards());
 
         m_driverController.a().whileTrue(new SequentialCommandGroup(new TimeCommand(), new ResetCommand(elevator), new ClawDefence(claw)));
@@ -155,8 +157,8 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         return new SequentialCommandGroup(
-            new TurnCommand(drivebase),
-            new DriveForwards(drivebase, 1),
+           // new TurnCommand(drivebase),
+            new DriveForwards(drivebase, -1),
             new ClawPrepCommand(claw),
             new ElevatorUpCommand(elevator, 5),
             new ParallelCommandGroup(

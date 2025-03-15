@@ -61,7 +61,7 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command wristProcessor() {
     return run(() -> {
-      double motorSpeed = pid.calculate(wristEncoder.get(), 120);
+      double motorSpeed = pid.calculate(wristEncoder.get(), 130);
       wristMotor.set(motorSpeed);
     });
   }

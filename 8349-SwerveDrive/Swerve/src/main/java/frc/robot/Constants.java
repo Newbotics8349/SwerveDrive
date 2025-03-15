@@ -36,6 +36,6 @@ public final class Constants {
       new Rotation2d(0));
 
   // Speeds for claw intake/expell
-  public static final double clawInSpeed = 0.25;
-  public static final double clawOutSpeed = clawInSpeed;
+  public static final double clawInSpeed = 0.3;
+  public static final double clawOutSpeed = 0.15;
 }
