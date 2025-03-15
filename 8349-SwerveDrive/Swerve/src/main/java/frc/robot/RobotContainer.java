@@ -143,6 +143,8 @@ public class RobotContainer {
         m_driverController.leftBumper().whileTrue(drivebase.strafeLeft());
         m_driverController.rightBumper().whileTrue(drivebase.strafeRight());
 
+        m_driverController.x().whileTrue(drivebase.robotForwards());
+
         m_driverController.a().whileTrue(new SequentialCommandGroup(new TimeCommand(), new ResetCommand(elevator), new ClawDefence(claw)));
     }
 
