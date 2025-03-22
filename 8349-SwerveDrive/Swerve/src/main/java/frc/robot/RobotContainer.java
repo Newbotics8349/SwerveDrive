@@ -147,7 +147,8 @@ public class RobotContainer {
 
         m_driverController.a().whileTrue(new SequentialCommandGroup(new TimeCommand(), new ResetCommand(elevator), new ClawDefence(claw)));
 
-        buttons.button(1).whileTrue(drivebase.driveTo(vision.testingPose(vision.getTargets())));
+        buttons.button(1).whileTrue(drivebase.driveTo(vision.getCameraToTagPose(vision.getTargets())));
+        buttons.button(2).onTrue(vision.testing());
     }
 
     /**
