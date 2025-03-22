@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.commands.DriveForwards;
 
 import java.io.File;
 import java.util.List;
@@ -157,6 +158,14 @@ public class SwerveSubsystem extends SubsystemBase {
     return runOnce(() -> {
       gyro.reset();
     });
+  }
+
+  public Command driveTo(Pose2d target) {
+    SmartDashboard.putNumber("X Distance", target.getX());
+    SmartDashboard.putNumber("Y Distance", target.getY());
+    SmartDashboard.putNumber("Rotation", target.getRotation().getRadians());
+    return new DriveForwards(this, target.getX(), target.getY(), target.getRotation().getRadians(), Math.sqrt(Math.pow(target.getX(), 2) 
+                                                                                                    + Math.pow(target.getY(), 2)) / 4);
   }
 
   public Command followPathCommand(double x, double y, Rotation2d rotation)

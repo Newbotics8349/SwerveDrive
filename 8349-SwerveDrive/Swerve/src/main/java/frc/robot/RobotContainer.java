@@ -8,7 +8,6 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ElevatorUpCommand;
 import frc.robot.commands.ResetCommand;
 import frc.robot.commands.TimeCommand;
-import frc.robot.commands.TurnCommand;
 import frc.robot.subsystems.AprilTagSubsystem;
 import frc.robot.commands.CoralClawCommand;
 import frc.robot.commands.CoralInCommand;
@@ -24,7 +23,6 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -148,6 +146,8 @@ public class RobotContainer {
         m_driverController.x().whileTrue(drivebase.robotForwards());
 
         m_driverController.a().whileTrue(new SequentialCommandGroup(new TimeCommand(), new ResetCommand(elevator), new ClawDefence(claw)));
+
+        buttons.button(1).whileTrue(drivebase.driveTo(vision.testingPose(vision.getTargets())));
     }
 
     /**
@@ -158,7 +158,7 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         return new SequentialCommandGroup(
            // new TurnCommand(drivebase),
-            new DriveForwards(drivebase, -1),
+            new DriveForwards(drivebase, -1, 0, 0, 2),
             new ClawPrepCommand(claw),
             new ElevatorUpCommand(elevator, 5),
             new ParallelCommandGroup(
@@ -166,13 +166,13 @@ public class RobotContainer {
                 new CoralClawCommand(claw),
                 new CoralOutCommand(intakeOuttake)
             ),
-            new DriveForwards(drivebase, -0.1),
+            new DriveForwards(drivebase, -0.1, 0, 0, 2),
             new ParallelCommandGroup(
                 new ElevatorUpCommand(elevator, 20),
                 new ClawPrepCommand(claw)
             ),
             new ParallelCommandGroup(
-                new DriveForwards(drivebase, 0.1),
+                new DriveForwards(drivebase, 0.1, 0, 0, 2),
                 new CoralInCommand(intakeOuttake),
                 new ClawPrepCommand(claw)                
             )

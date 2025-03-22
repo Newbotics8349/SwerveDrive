@@ -37,22 +37,9 @@ public class AprilTagSubsystem extends SubsystemBase {
 
   public List<PhotonTrackedTarget> getTargets() {
     SmartDashboard.putString("Targets", tagsTracked.toString());
+    SmartDashboard.putNumber("TagsTracked Number", tagsTracked.size());
     return tagsTracked;
   }
-
-  // public PhotonTrackedTarget getBestTarget(List<PhotonTrackedTarget> targetList) {
-  //   PhotonTrackedTarget bestTarget = null;
-  //   for (PhotonTrackedTarget target : targetList) {
-  //     if (bestTarget == null) {
-  //       bestTarget = target;
-  //     } else {
-  //       if (Math.abs(bestTarget.getYaw()) > Math.abs(target.getYaw())) {
-  //         bestTarget = target;
-  //       }
-  //     }
-  //   } 
-  //   return bestTarget;
-  // }
 
   public Pose2d getCameraToTagPose(int tagId) {
     // Get tag object if it exists
@@ -63,12 +50,27 @@ public class AprilTagSubsystem extends SubsystemBase {
     List<PhotonTrackedTarget> targets = new ArrayList<>();
 
     targets.add(target);
-    return getCameraToTagPose(targets);
+    return getCameraToTagPose(/* targets */);
   }
 
-  public Pose2d getCameraToTagPose(List<PhotonTrackedTarget> targets) { 
-    System.out.println(targets.toString());
+  public Pose2d testingPose(List<PhotonTrackedTarget> targets) {
+    SmartDashboard.putNumber("All Targets", targets.size());
+
+    Pose2d pose = new Pose2d(1, 0, new Rotation2d());
+
+    SmartDashboard.putNumber("Target X", pose.getX());
+    SmartDashboard.putNumber("Target Y", pose.getY());
+    SmartDashboard.putNumber("Target Rotation", pose.getRotation().getDegrees());
+
+    return pose;
+  }
+
+  public Pose2d getCameraToTagPose( /* List<PhotonTrackedTarget> targets */ ) {
     // Get transform from target
+
+    List<PhotonTrackedTarget> targets = tagsTracked;
+
+    SmartDashboard.putString("Testing", targets.toString());
     if (targets.size() > 0) {
       PhotonTrackedTarget target = targets.get(0);
 

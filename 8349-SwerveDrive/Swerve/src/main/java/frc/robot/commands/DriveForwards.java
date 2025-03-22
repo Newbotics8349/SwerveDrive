@@ -14,18 +14,24 @@ public class DriveForwards extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final SwerveSubsystem m_subsystem;
   private StopWatch stopWatch = new StopWatch();
-  private double distance;
+  double x;
+  double y;
+  double rotationRadians;
+  double end;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public DriveForwards(SwerveSubsystem subsystem, double distance) {
-    this.distance = distance;
+  public DriveForwards(SwerveSubsystem subsystem, double x, double y, double rotationRadians, double end) {
+    this.x = x;
+    this.y = y;
+    this.rotationRadians = rotationRadians;
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
+    this.end = end;
   }
 
   // Called when the command is initially scheduled.
@@ -37,7 +43,7 @@ public class DriveForwards extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.driveFieldOriented(new ChassisSpeeds(distance, 0, 0));
+    m_subsystem.driveFieldOriented(new ChassisSpeeds(x, y, rotationRadians));
   }
 
   // Called once the command ends or is interrupted.
@@ -49,6 +55,6 @@ public class DriveForwards extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return stopWatch.getDuration() > 2;
+    return stopWatch.getDuration() > end;
   }
 }
