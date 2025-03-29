@@ -25,10 +25,11 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
-
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -55,7 +56,7 @@ public class RobotContainer {
     // * Initialize the robot subsystems
     private final SwerveSubsystem drivebase = new SwerveSubsystem();
 
-    private final AprilTagSubsystem vision = new AprilTagSubsystem("USB_Camera");
+    private final AprilTagSubsystem vision = new AprilTagSubsystem("cameramain");
     private final LEDSubsystem leds = new LEDSubsystem();
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
@@ -78,6 +79,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, IO devices, and commands.
      */
     public RobotContainer() {
+        CameraServer.startAutomaticCapture();
         // Make autonomous routine selector available on the smart diashboard
         autoSelector.addOption("simpleAuto", getBasicAutonomousCommand());
         SmartDashboard.putData("Auto choices", autoSelector);
@@ -86,29 +88,30 @@ public class RobotContainer {
 
         // * Configure sticks to drive the robot in TeleOp
         SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                () -> m_driverController.getLeftY() * -1,
-                () -> m_driverController.getLeftX() * -1)
-                .withControllerRotationAxis(() -> m_driverController.getRightX() * -1)
+                () -> m_driverController.getLeftY(),
+                () -> m_driverController.getLeftX())
+                .withControllerRotationAxis(() -> m_driverController.getRightX()*-1)
                 .deadband(OperatorConstants.DEADBAND)
                 .scaleTranslation(0.8)
                 .allianceRelativeControl(true);
                 
         SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
                 .withControllerHeadingAxis(() -> preventReturnHeadingX(
-                    m_driverController.getRightX() * -1, m_driverController.getRightY(), 0.2),
+                    m_driverController.getRightX() * -1, m_driverController.getRightY(), 0),
                 () -> preventReturnHeadingY(
-                    m_driverController.getRightY() * -1, m_driverController.getRightX(), 0.2))
+                    m_driverController.getRightY() * -1, m_driverController.getRightX(), 0))
                 .headingWhile(true);
 
         Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
-        //Command driveFieldOrientedAngularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-        drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
+        Command driveFieldOrientedAngularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
+        drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
         //configure dPad movement
-        m_driverController.povDown().whileTrue(new RelativeMovementCommand(drivebase, -0.5,0));
-        m_driverController.povUp().whileTrue(new RelativeMovementCommand(drivebase, 0.5,0));
-        m_driverController.povLeft().whileTrue(new RelativeMovementCommand(drivebase, 0,0.5));
-        m_driverController.povRight().whileTrue(new RelativeMovementCommand(drivebase, 0,-0.5));
+        int f = drivebase.flipDpad;
+        m_driverController.povDown().whileTrue(new RelativeMovementCommand(drivebase, f*-0.5,0));
+        m_driverController.povUp().whileTrue(new RelativeMovementCommand(drivebase, f*0.5,0));
+        m_driverController.povLeft().whileTrue(new RelativeMovementCommand(drivebase, 0,f*0.5));
+        m_driverController.povRight().whileTrue(new RelativeMovementCommand(drivebase, 0,f*-0.5));
         
         // * Configure the button bindings
         configureBindings();
@@ -166,9 +169,11 @@ public class RobotContainer {
 
         //m_driverController.leftTrigger().whileTrue(new AdjustTowardsAprilTagCommand(drivebase,vision,15)); still iffy
 
-        m_driverController.y().whileTrue(new AprilTagAlignCommandPathPlanner(drivebase,vision,15,
+        m_driverController.y().whileTrue(new AprilTagAlignCommandPathPlanner(drivebase,vision,11,
             (()->!m_driverController.y().getAsBoolean())));
-
+        
+        m_driverController.b().onChange(drivebase.flipCommand());
+        
         m_driverController.a().whileTrue(drivebase.resetGyro());
 
         m_driverController.x().whileTrue(drivebase.robotForwards());

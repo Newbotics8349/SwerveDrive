@@ -77,10 +77,10 @@ public class AprilTagSubsystem extends SubsystemBase {
   
       // Offset the target transform considering that the camera is not in the center
       // of the robot
-      transform3d.plus(new Transform3d(Constants.cameraOnRobot));
+      Transform3d transform3d2 = transform3d.plus(new Transform3d(Constants.cameraOnRobot));
   
       // Create a Pose2d from the Transform3d
-      return new Pose2d(transform3d.getX(), transform3d.getY(), transform3d.getRotation().toRotation2d());
+      return new Pose2d(transform3d2.getX(), transform3d2.getY(), transform3d2.getRotation().toRotation2d());
     }
     return new Pose2d(0, 0, Rotation2d.fromDegrees(0));
   }

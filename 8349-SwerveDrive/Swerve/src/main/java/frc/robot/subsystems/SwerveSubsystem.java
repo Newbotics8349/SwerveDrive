@@ -58,6 +58,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private Field2d m_field = new Field2d();
     Trajectory displayTrajectory = new Trajectory();
     private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+    public int flipDpad = 1;
 
   public SwerveSubsystem() {
     try
@@ -73,6 +74,7 @@ public class SwerveSubsystem extends SubsystemBase {
       holoDriveController = new PPHolonomicDriveController(new PIDConstants(0,0,0), new PIDConstants(0,0,0));
       //gets the field from the swervedrive
       m_field = swerveDrive.field;
+      swerveDrive.swerveDrivePoseEstimator.resetRotation(new Rotation2d().fromDegrees(0));
       SmartDashboard.putData("field", m_field);
 
     } catch (Exception e)
@@ -182,14 +184,15 @@ public class SwerveSubsystem extends SubsystemBase {
    * 
     */
     public void driveFieldOriented(ChassisSpeeds velocity) {
-      //System.out.println("Field:   X Speed: " + velocity.vxMetersPerSecond + " Y Speed: " + velocity.vyMetersPerSecond + " R Speed: " + velocity.omegaRadiansPerSecond);
-        swerveDrive.driveFieldOriented(velocity);
+      System.out.println("Field:   X Speed: " + velocity.vxMetersPerSecond + " Y Speed: " + velocity.vyMetersPerSecond + " R Speed: " + velocity.omegaRadiansPerSecond);
+        swerveDrive.driveFieldOriented(new ChassisSpeeds(velocity.vxMetersPerSecond*-1,velocity.vyMetersPerSecond*-1,velocity.omegaRadiansPerSecond*-1));
     }
 
-    public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity) {
+    public Command driveFieldOriented(Supplier<ChassisSpeeds> velocitysupplier) {
         return run(() -> {
-          //System.out.println("Field:   X Speed: " + velocity.get().vxMetersPerSecond + " Y Speed: " + velocity.get().vyMetersPerSecond + " R Speed: " + velocity.get().omegaRadiansPerSecond);
-            swerveDrive.driveFieldOriented(velocity.get());
+          ChassisSpeeds velocity = velocitysupplier.get();
+          System.out.println("Field:   X Speed: " + velocity.vxMetersPerSecond + " Y Speed: " + velocity.vyMetersPerSecond + " R Speed: " + velocity.omegaRadiansPerSecond);
+            swerveDrive.driveFieldOriented(new ChassisSpeeds(velocity.vxMetersPerSecond*-1,velocity.vyMetersPerSecond*-1,velocity.omegaRadiansPerSecond*-1));
         });
     }
 
@@ -200,15 +203,17 @@ public class SwerveSubsystem extends SubsystemBase {
    * 
     */
     public void driveRobotOriented(ChassisSpeeds velocity) {
-      //System.out.println("Robot :   X Speed: " + velocity.vxMetersPerSecond + " Y Speed: " + velocity.vyMetersPerSecond + " R Speed: " + velocity.omegaRadiansPerSecond);
-      swerveDrive.drive(velocity);
+      System.out.println("Robot :   X Speed: " + velocity.vxMetersPerSecond + " Y Speed: " + velocity.vyMetersPerSecond + " R Speed: " + velocity.omegaRadiansPerSecond);
+      swerveDrive.drive((new ChassisSpeeds(velocity.vxMetersPerSecond*-1,velocity.vyMetersPerSecond*-1,velocity.omegaRadiansPerSecond*-1)));
   }
 
-    public Command driveRobotOriented(Supplier<ChassisSpeeds> velocity) {
-      return run(() -> {
-          swerveDrive.drive(velocity.get());
-      });
-    }
+  public Command driveRobotOriented(Supplier<ChassisSpeeds> velocitysupplier) {
+    return run(() -> {
+      ChassisSpeeds velocity = velocitysupplier.get();
+      System.out.println("Field:   X Speed: " + velocity.vxMetersPerSecond + " Y Speed: " + velocity.vyMetersPerSecond + " R Speed: " + velocity.omegaRadiansPerSecond);
+        swerveDrive.drive(new ChassisSpeeds(velocity.vxMetersPerSecond*-1,velocity.vyMetersPerSecond*-1,velocity.omegaRadiansPerSecond*-1));
+    });
+}
 
     public Command robotForwards() {
       // double angle = Math.PI * gyro.getAngle() / 180;
@@ -230,6 +235,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public void callingDrive(ChassisSpeeds chassisSpeeds, DriveFeedforwards driveFeedforwards) {
     driveRobotOriented(chassisSpeeds);
+  }
+  public Command flipCommand() {
+    return runOnce(() -> {
+      flipDpad*=-1;
+    });
   }
 
   public Command resetGyro() {
@@ -286,7 +296,7 @@ public class SwerveSubsystem extends SubsystemBase {
         goalPose
       );
 
-      TrajectoryConfig config = new TrajectoryConfig(3.0, 3.0); // Max velocity and acceleration
+      TrajectoryConfig config = new TrajectoryConfig(1.0, 2.0); // Max velocity and acceleration
       displayTrajectory = TrajectoryGenerator.generateTrajectory(
             List.of(
                     new Pose2d(getPose().getX(), getPose().getY(), angleOfPath), // Start pose
@@ -294,7 +304,7 @@ public class SwerveSubsystem extends SubsystemBase {
                       .plus(new Transform2d(goalPose.getX(),goalPose.getY(),goalPose.getRotation())) // End pose
             ),config
             );
-      PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+      PathConstraints constraints = new PathConstraints(1.0, 2.0, 2 * Math.PI, 4 * Math.PI);
       PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0.0, rotation.plus(getPose().getRotation())));
 
             path.preventFlipping = true;

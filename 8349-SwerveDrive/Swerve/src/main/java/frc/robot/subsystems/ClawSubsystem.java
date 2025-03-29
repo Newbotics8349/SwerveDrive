@@ -28,7 +28,7 @@ public class ClawSubsystem extends SubsystemBase {
   
 
   SparkMax wristMotor = new SparkMax(60, MotorType.kBrushless);
-  DutyCycleEncoder wristEncoder = new DutyCycleEncoder(4, 360.0, 178);
+  DutyCycleEncoder wristEncoder = new DutyCycleEncoder(4, 360.0, 24);
   double wristValue;
 
   /**

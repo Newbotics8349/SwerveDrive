@@ -26,7 +26,7 @@ public final class Constants {
     public static final double DEADBAND = 0.04;
   }
 
-  public static final double maxSpeed = Units.feetToMeters(9);
+  public static final double maxSpeed = Units.feetToMeters(5);
 
   // cameraOnRobot describes the camera's location relative to the robot center
   // with forward = +Y
@@ -36,6 +36,6 @@ public final class Constants {
       new Rotation2d(0));
 
   // Speeds for claw intake/expell
-  public static final double clawInSpeed = 0.9;
-  public static final double clawOutSpeed = 0.9;
+  public static final double clawInSpeed = 0.3;
+  public static final double clawOutSpeed = 0.3;
 }
