@@ -4,11 +4,11 @@
 
 package frc.robot.subsystems;
 
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.commands.DriveForwards;
 
 import java.io.File;
 import java.util.List;
@@ -27,13 +27,20 @@ import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import swervelib.parser.SwerveParser;
 import swervelib.SwerveDrive;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+
+import com.pathplanner.lib.auto.AutoBuilder;
 
 import static edu.wpi.first.units.Units.Meter;
 
@@ -48,7 +55,8 @@ public class SwerveSubsystem extends SubsystemBase {
     // Objects for path planning commands
     PPHolonomicDriveController holoDriveController;
     RobotConfig robotConfig;
-
+    private Field2d m_field = new Field2d();
+    Trajectory displayTrajectory = new Trajectory();
     private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
   public SwerveSubsystem() {
@@ -62,12 +70,39 @@ public class SwerveSubsystem extends SubsystemBase {
       // Alternative method if you don't want to supply the conversion factor via JSON files.
       // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed\, angleConversionFactor, driveConversionFactor);
       robotConfig = RobotConfig.fromGUISettings();
-      holoDriveController = new PPHolonomicDriveController(new PIDConstants(0), new PIDConstants(0));
+      holoDriveController = new PPHolonomicDriveController(new PIDConstants(0,0,0), new PIDConstants(0,0,0));
+      //gets the field from the swervedrive
+      m_field = swerveDrive.field;
+      SmartDashboard.putData("field", m_field);
 
     } catch (Exception e)
     {
       throw new RuntimeException(e);
     }
+    //configures the auto builder
+    AutoBuilder.configure(
+          this::getPose, // Robot pose supplier
+          this::setPose, // Method to reset odometry (will be called if your auto has a starting pose)
+          this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+          (speeds, feedforwards) -> driveRobotOriented(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+          new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                  new PIDConstants(0, 0.0, 0.0), // Translation PID constants
+                  new PIDConstants(0, 0.0, 0.0) // Rotation PID constants
+          ),
+          robotConfig, // The robot configuration
+          () -> {
+            // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // This will flip the path being followed to the red side of the field.
+            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+              return alliance.get() == DriverStation.Alliance.Red;
+            }
+            return false;
+          },
+          this // Reference to this subsystem to set requirements
+    );
   }
 
     /**
@@ -95,8 +130,24 @@ public class SwerveSubsystem extends SubsystemBase {
         return false;
     }
 
+    public float getHeading(){
+      return gyro.getYaw();
+    }
+
+    public Pose2d getPose() {
+      return swerveDrive.getPose();
+    }
+    
+    public ChassisSpeeds getRobotVelocity() {
+      return swerveDrive.getRobotVelocity();
+    }
+    public void setPose(Pose2d pose) {
+      swerveDrive.swerveDrivePoseEstimator.resetPose(pose);
+    } 
+
   @Override
   public void periodic() {
+    displayFieldItems(getPose());
     // This method will be called once per scheduler run
     if (gyro.isConnected()) {
       SmartDashboard.putString("Gyro Status", "Connected");
@@ -111,6 +162,7 @@ public class SwerveSubsystem extends SubsystemBase {
     } else {
       SmartDashboard.putString("Gyro Status", "Not Connected");
     }
+
   }
 
     @Override
@@ -122,14 +174,40 @@ public class SwerveSubsystem extends SubsystemBase {
         return swerveDrive;
     }
 
+  
+  /**setup for movement relative to the field
+   * Left is positive, right is negative
+   * Forward is positive, backward is negative
+   * Counter clockwise is positive, clockwise is negative
+   * 
+    */
     public void driveFieldOriented(ChassisSpeeds velocity) {
+      //System.out.println("Field:   X Speed: " + velocity.vxMetersPerSecond + " Y Speed: " + velocity.vyMetersPerSecond + " R Speed: " + velocity.omegaRadiansPerSecond);
         swerveDrive.driveFieldOriented(velocity);
     }
 
     public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity) {
         return run(() -> {
+          //System.out.println("Field:   X Speed: " + velocity.get().vxMetersPerSecond + " Y Speed: " + velocity.get().vyMetersPerSecond + " R Speed: " + velocity.get().omegaRadiansPerSecond);
             swerveDrive.driveFieldOriented(velocity.get());
         });
+    }
+
+  /**setup for movement relative to the robot
+   * Left is positive, right is negative
+   * Forward is positive, backward is negative
+   * Counter clockwise is positive, clockwise is negative
+   * 
+    */
+    public void driveRobotOriented(ChassisSpeeds velocity) {
+      //System.out.println("Robot :   X Speed: " + velocity.vxMetersPerSecond + " Y Speed: " + velocity.vyMetersPerSecond + " R Speed: " + velocity.omegaRadiansPerSecond);
+      swerveDrive.drive(velocity);
+  }
+
+    public Command driveRobotOriented(Supplier<ChassisSpeeds> velocity) {
+      return run(() -> {
+          swerveDrive.drive(velocity.get());
+      });
     }
 
     public Command robotForwards() {
@@ -138,20 +216,20 @@ public class SwerveSubsystem extends SubsystemBase {
       return driveFieldOriented(() -> new ChassisSpeeds(v, 0, 0));
     }
   
-    public Command strafeLeft() {
+    public Command turnLeft() {
       // double angle = Math.PI * (gyro.getAngle() - 90) / 180;
       double v = 0.5;
-      return driveFieldOriented(() -> new ChassisSpeeds(0, v, 0));
+      return driveFieldOriented(() -> new ChassisSpeeds(0, 0, v));
     }
 
-    public Command strafeRight() {
+    public Command turnRight() {
       // double angle = Math.PI * (gyro.getAngle() + 90) / 180;
       double v = 0.5;
-      return driveFieldOriented(() -> new ChassisSpeeds(0, -v, 0));
+      return driveFieldOriented(() -> new ChassisSpeeds(0, 0, -v));
     }
 
   public void callingDrive(ChassisSpeeds chassisSpeeds, DriveFeedforwards driveFeedforwards) {
-    swerveDrive.drive(chassisSpeeds);
+    driveRobotOriented(chassisSpeeds);
   }
 
   public Command resetGyro() {
@@ -160,24 +238,64 @@ public class SwerveSubsystem extends SubsystemBase {
     });
   }
 
-  public Command driveTo(Pose2d target) {
-    SmartDashboard.putNumber("X Distance", target.getX());
-    SmartDashboard.putNumber("Y Distance", target.getY());
-    SmartDashboard.putNumber("Rotation", target.getRotation().getRadians());
-    return new DriveForwards(this, target.getX(), target.getY(), target.getRotation().getRadians(), Math.sqrt(Math.pow(target.getX(), 2) 
-                                                                                                    + Math.pow(target.getY(), 2)) / 4);
+  public Command resetTrajectory() {
+    return runOnce(() -> {
+      System.out.println("Resetting Trajectory");
+      displayTrajectory = new Trajectory();
+    });
   }
 
+  public void displayFieldItems(Pose2d pose) {
+      //m_field.setRobotPose(pose);
+      m_field.getObject("trajectory").setTrajectory(displayTrajectory);
+  }
+
+  // public void visualizePath(PathPlannerPath path) {
+  //       PathPlannerTrajectory trajectory = path.generateTrajectory(null, null, robotConfig);// Corrected
+  //       Trajectory trajectory2 = path.
+  //   }
+
+  // public Command driveTo(Pose2d target) {
+  //   SmartDashboard.putNumber("X Distance", target.getX());
+  //   SmartDashboard.putNumber("Y Distance", target.getY());
+  //   SmartDashboard.putNumber("Rotation", target.getRotation().getRadians());
+  //   return new DriveForwards(this, target.getX(), target.getY(), target.getRotation().getRadians(), Math.sqrt(Math.pow(target.getX(), 2) 
+  //                                                                                                   + Math.pow(target.getY(), 2)) / 4);
+  // }
+  
+  
+  /*
+   * Follow a path using the PathPlanner library
+   * @param x The relative x coordinate of the end point
+   * @param y The relative y coordinate of the end point
+   * @param rotation The relative rotation of the end point
+   */
   public Command followPathCommand(double x, double y, Rotation2d rotation)
   {
     try {
+      //rotates the coordinates so that the x and y translation are relative to the feild and not the robot heading
+      Pose2d goalPose = new Pose2d(0, 0, getPose().getRotation())
+        .plus(new Transform2d(x,y,new Rotation2d(0)));
+      // what direction to the goal postion
+      Rotation2d angleOfPath = new Rotation2d(-Math.atan2(goalPose.getX(), goalPose.getY())).plus(new Rotation2d(Math.PI/2));
+      //changes robot initial velocity to the direction of the goal
+      goalPose = new Pose2d(goalPose.getX(),goalPose.getY(),angleOfPath);
+      //creates path waypoints
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-        new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)),
-        new Pose2d(x, y, rotation)
+        new Pose2d(0.0, 0.0, angleOfPath),
+        goalPose
       );
-      PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
 
-      PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0.0, rotation));
+      TrajectoryConfig config = new TrajectoryConfig(3.0, 3.0); // Max velocity and acceleration
+      displayTrajectory = TrajectoryGenerator.generateTrajectory(
+            List.of(
+                    new Pose2d(getPose().getX(), getPose().getY(), angleOfPath), // Start pose
+                    new Pose2d(getPose().getX(), getPose().getY(), new Rotation2d(0))
+                      .plus(new Transform2d(goalPose.getX(),goalPose.getY(),goalPose.getRotation())) // End pose
+            ),config
+            );
+      PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+      PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0.0, rotation.plus(getPose().getRotation())));
 
             path.preventFlipping = true;
 
@@ -201,38 +319,5 @@ public class SwerveSubsystem extends SubsystemBase {
             DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
             return Commands.none();
         }
-    }
-    public void followPathCommandAuto(double x, double y, Rotation2d rotation)
-    {
-      try {
-        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-          new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0)),
-          new Pose2d(x, y, rotation)
-        );
-        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
-  
-        PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0.0, rotation));
-  
-              path.preventFlipping = true;
-  
-              new FollowPathCommand(
-                      path,
-                      swerveDrive::getPose,
-                      swerveDrive::getRobotVelocity,
-                      this::callingDrive,
-                      holoDriveController,
-                      robotConfig,
-                      () -> {
-                          var alliance = DriverStation.getAlliance();
-                          if (alliance.isPresent()) {
-                              return alliance.get() == DriverStation.Alliance.Red;
-                          }
-                          return false;
-                      },
-                      this);
-          } catch (Exception e) {
-              System.out.println("Error");
-              DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-          }
-      }
+  }
 }

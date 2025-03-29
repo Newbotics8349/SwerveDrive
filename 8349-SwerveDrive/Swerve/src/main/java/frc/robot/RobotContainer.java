@@ -11,6 +11,8 @@ import frc.robot.commands.TimeCommand;
 import frc.robot.subsystems.AprilTagSubsystem;
 import frc.robot.commands.CoralClawCommand;
 import frc.robot.commands.CoralInCommand;
+import frc.robot.commands.AprilTagAlignCommandPathPlanner;
+import frc.robot.commands.RelativeMovementCommand;
 import frc.robot.commands.ClawDefence;
 import frc.robot.commands.ClawPrepCommand;
 import frc.robot.commands.CoralOutCommand;
@@ -23,7 +25,13 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
+
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -47,7 +55,7 @@ public class RobotContainer {
     // * Initialize the robot subsystems
     private final SwerveSubsystem drivebase = new SwerveSubsystem();
 
-    private final AprilTagSubsystem vision = new AprilTagSubsystem("cameramain");
+    private final AprilTagSubsystem vision = new AprilTagSubsystem("USB_Camera");
     private final LEDSubsystem leds = new LEDSubsystem();
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
@@ -59,47 +67,62 @@ public class RobotContainer {
     private final CommandXboxController m_driverController = new CommandXboxController(
             OperatorConstants.kDriverControllerPort);
 
+    // the button panel stuff
     CommandGenericHID buttons = new CommandGenericHID(1);
 
     // * Define objects for autonomous routine selection
-    // private final SendableChooser<Command> autoSelector =
-    // AutoBuilder.buildAutoChooser();
-    // Auto selection strings
-    // private static final String newmarketAuto = "Newmarket Auto";
+    private final SendableChooser<Command> autoSelector =
+    AutoBuilder.buildAutoChooser("newmarketSimpleAuto");
 
     /**
      * The container for the robot. Contains subsystems, IO devices, and commands.
      */
     public RobotContainer() {
+        // Make autonomous routine selector available on the smart diashboard
+        autoSelector.addOption("simpleAuto", getBasicAutonomousCommand());
+        SmartDashboard.putData("Auto choices", autoSelector);
 
-        // // * Set up autonomous routine selection
-        // // Populate autonomous routine selection with available routines
-        // autoSelector.setDefaultOption(newmarketAuto,
-        // AutoBuilder.buildAuto(newmarketAuto));
-        // // Make autonomous routine selector available on the smart diashboard
-        // SmartDashboard.putData("Auto choices", autoSelector);
         SmartDashboard.putData(elevator);
 
         // * Configure sticks to drive the robot in TeleOp
         SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
                 () -> m_driverController.getLeftY() * -1,
                 () -> m_driverController.getLeftX() * -1)
-                .withControllerRotationAxis(m_driverController::getRightX)
+                .withControllerRotationAxis(() -> m_driverController.getRightX() * -1)
                 .deadband(OperatorConstants.DEADBAND)
                 .scaleTranslation(0.8)
                 .allianceRelativeControl(true);
-        // SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
-        //         .withControllerHeadingAxis(m_driverController::getRightX,
-        //                 m_driverController::getRightY)
-        //         .headingWhile(true);
+                
+        SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
+                .withControllerHeadingAxis(() -> preventReturnHeadingX(
+                    m_driverController.getRightX() * -1, m_driverController.getRightY(), 0.2),
+                () -> preventReturnHeadingY(
+                    m_driverController.getRightY() * -1, m_driverController.getRightX(), 0.2))
+                .headingWhile(true);
 
-        // Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
-        Command driveFieldOrientedAngularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
+        Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
+        //Command driveFieldOrientedAngularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
+        drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
 
-        // * Configure the trigger bindings
+        //configure dPad movement
+        m_driverController.povDown().whileTrue(new RelativeMovementCommand(drivebase, -0.5,0));
+        m_driverController.povUp().whileTrue(new RelativeMovementCommand(drivebase, 0.5,0));
+        m_driverController.povLeft().whileTrue(new RelativeMovementCommand(drivebase, 0,0.5));
+        m_driverController.povRight().whileTrue(new RelativeMovementCommand(drivebase, 0,-0.5));
+        
+        // * Configure the button bindings
         configureBindings();
-        drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
     }
+
+    // * Use this method to define deadbands for the sticks and make sure the heading wont reset after pathplanning
+    private double preventReturnHeadingX(double value, double value2, double deadband) {
+        return Math.hypot(value2, value) > deadband ? value : drivebase.getPose().getRotation().getSin();
+    }
+
+    private double preventReturnHeadingY(double value, double value2, double deadband) {
+        return Math.hypot(value2, value) > deadband ? value : drivebase.getPose().getRotation().getCos();
+    }
+
 
     /**
      * Use this method to define your trigger->command mappings. Triggers can be
@@ -120,7 +143,7 @@ public class RobotContainer {
         Trigger targetsSeen = new Trigger(vision::hasTargets);
         targetsSeen.debounce(0.1);
         targetsSeen.onTrue(leds.debugMode(vision));
-        // targetsSeen.onFalsde(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
+        //targetsSeen.onFalse(leds.setGlobalColour(0,0,0)); // LEDs off when no targets
 
         // Algae half levels
 
@@ -138,17 +161,19 @@ public class RobotContainer {
         buttons.button(4).whileTrue(elevator.goToLevel(0)).onFalse(elevator.stop());
         buttons.button(4).whileTrue(claw.wristProcessor()).onFalse(claw.stopWrist());
 
-        m_driverController.leftBumper().whileTrue(drivebase.strafeLeft());
-        m_driverController.rightBumper().whileTrue(drivebase.strafeRight());
+        m_driverController.leftBumper().whileTrue(drivebase.turnLeft());
+        m_driverController.rightBumper().whileTrue(drivebase.turnRight());
+
+        //m_driverController.leftTrigger().whileTrue(new AdjustTowardsAprilTagCommand(drivebase,vision,15)); still iffy
+
+        m_driverController.y().whileTrue(new AprilTagAlignCommandPathPlanner(drivebase,vision,15,
+            (()->!m_driverController.y().getAsBoolean())));
 
         m_driverController.a().whileTrue(drivebase.resetGyro());
 
         m_driverController.x().whileTrue(drivebase.robotForwards());
 
         m_driverController.a().whileTrue(new SequentialCommandGroup(new TimeCommand(), new ResetCommand(elevator), new ClawDefence(claw)));
-
-        buttons.button(1).whileTrue(drivebase.driveTo(vision.getCameraToTagPose(vision.getTargets())));
-        buttons.button(2).onTrue(vision.testing());
     }
 
     /**
@@ -156,10 +181,10 @@ public class RobotContainer {
      *
      * @return the command to run in autonomous
      */
-    public Command getAutonomousCommand() {
+    private Command getBasicAutonomousCommand() {
         return new SequentialCommandGroup(
            // new TurnCommand(drivebase),
-            new DriveForwards(drivebase, -1, 0, 0, 2),
+            new DriveForwards(drivebase, -1),
             new ClawPrepCommand(claw),
             new ElevatorUpCommand(elevator, 5),
             new ParallelCommandGroup(
@@ -167,30 +192,22 @@ public class RobotContainer {
                 new CoralClawCommand(claw),
                 new CoralOutCommand(intakeOuttake)
             ),
-            new DriveForwards(drivebase, -0.1, 0, 0, 2),
+            new DriveForwards(drivebase, -0.1),
             new ParallelCommandGroup(
                 new ElevatorUpCommand(elevator, 20),
                 new ClawPrepCommand(claw)
             ),
             new ParallelCommandGroup(
-                new DriveForwards(drivebase, 0.1, 0, 0, 2),
+                new DriveForwards(drivebase, 0.1),
                 new CoralInCommand(intakeOuttake),
                 new ClawPrepCommand(claw)                
             )
         );
-        // return Commands.run(
-        //     () -> 
-        //     drivebase.callingDrive(new ChassisSpeeds(-1, 0, 0), null), drivebase).withTimeout(2);
-        // return autoSelector.getSelected();
-        // // Get name of routine to run from the selector
-        // String selectedAutoName = autoSelector.getSelected();
+    }
 
-        // // Return the associated command from the Autos class
-        // switch (selectedAutoName) {
-        // case newmarketAuto:
-        // return Autos.newmarketAuto(drivebase);
-        // default:
-        // return Autos.autoNotFound();
-        // }
+    public Command getAutonomousCommand() {
+        Command auto = autoSelector.getSelected();
+        return auto;
+
     }
 }
