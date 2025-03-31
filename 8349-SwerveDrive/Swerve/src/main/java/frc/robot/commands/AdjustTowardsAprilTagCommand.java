@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 /** A command that uses an April Tag Vision to adjust towards given tag while called. */
 public class AdjustTowardsAprilTagCommand extends Command {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField", "unused"})
+  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final SwerveSubsystem m_swerveSubsystem;
   private final AprilTagSubsystem m_aprilTagSubsystem;
   private StopWatch stopWatch = new StopWatch();

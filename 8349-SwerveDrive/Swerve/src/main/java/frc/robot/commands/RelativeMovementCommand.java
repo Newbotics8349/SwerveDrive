@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 /** A command that uses a swerve subsystem and x and y values to move the bot relative to itself. */
 public class RelativeMovementCommand extends Command {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField", "unused"})
+  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final SwerveSubsystem m_SwerveSubsystem;
   private double x;
   private double y;

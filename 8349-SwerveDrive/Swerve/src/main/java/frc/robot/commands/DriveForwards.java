@@ -24,7 +24,7 @@ public class DriveForwards extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public DriveForwards(SwerveSubsystem subsystem, double x){//, double y, double rotationRadians, double end) {
+  public DriveForwards(SwerveSubsystem subsystem, double x, double y, double rotationRadians, double end){//, double y, double rotationRadians, double end) {
     this.x = x;
     this.y = y;
     this.rotationRadians = rotationRadians;
@@ -32,6 +32,13 @@ public class DriveForwards extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
     this.end = end;
+  }
+
+  public DriveForwards(SwerveSubsystem subsystem, double x){//, double y, double rotationRadians, double end) {
+    this.x = x;
+    m_subsystem = subsystem;
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(subsystem);
   }
 
   // Called when the command is initially scheduled.

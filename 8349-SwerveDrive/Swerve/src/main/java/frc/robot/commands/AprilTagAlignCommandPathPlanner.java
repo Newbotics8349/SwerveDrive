@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 /** A command that uses an April Tag Vision to align with given tag. */
 public class AprilTagAlignCommandPathPlanner extends Command {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField", "unused"})
+  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final SwerveSubsystem m_swerveSubsystem;
   private final AprilTagSubsystem m_aprilTagSubsystem;
   private int TagId;

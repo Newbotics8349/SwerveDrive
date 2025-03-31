@@ -29,8 +29,6 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.util.function.Supplier;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -102,6 +100,7 @@ public class RobotContainer {
                     m_driverController.getRightY() * -1, m_driverController.getRightX(), 0))
                 .headingWhile(true);
 
+        @SuppressWarnings("unused")
         Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
         Command driveFieldOrientedAngularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
         drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity);
@@ -189,23 +188,23 @@ public class RobotContainer {
     private Command getBasicAutonomousCommand() {
         return new SequentialCommandGroup(
            // new TurnCommand(drivebase),
-            new DriveForwards(drivebase, -1),
-            new ClawPrepCommand(claw),
-            new ElevatorUpCommand(elevator, 5),
-            new ParallelCommandGroup(
-                new ElevatorStayCommand(elevator),
-                new CoralClawCommand(claw),
-                new CoralOutCommand(intakeOuttake)
-            ),
-            new DriveForwards(drivebase, -0.1),
-            new ParallelCommandGroup(
-                new ElevatorUpCommand(elevator, 20),
-                new ClawPrepCommand(claw)
-            ),
-            new ParallelCommandGroup(
-                new DriveForwards(drivebase, 0.1),
-                new CoralInCommand(intakeOuttake),
-                new ClawPrepCommand(claw)                
+           new DriveForwards(drivebase, -1, 0, 0, 2),
+           new ClawPrepCommand(claw),
+           new ElevatorUpCommand(elevator, 5),
+           new ParallelCommandGroup(
+               new ElevatorStayCommand(elevator),
+               new CoralClawCommand(claw),
+               new CoralOutCommand(intakeOuttake)
+           ),
+           new DriveForwards(drivebase, -0.1, 0, 0, 2),
+           new ParallelCommandGroup(
+               new ElevatorUpCommand(elevator, 20),
+               new ClawPrepCommand(claw)
+           ),
+           new ParallelCommandGroup(
+               new DriveForwards(drivebase, 0.1, 0, 0, 2),
+               new CoralInCommand(intakeOuttake),
+               new ClawPrepCommand(claw)                
             )
         );
     }

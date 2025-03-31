@@ -74,7 +74,7 @@ public class SwerveSubsystem extends SubsystemBase {
       holoDriveController = new PPHolonomicDriveController(new PIDConstants(0,0,0), new PIDConstants(0,0,0));
       //gets the field from the swervedrive
       m_field = swerveDrive.field;
-      swerveDrive.swerveDrivePoseEstimator.resetRotation(new Rotation2d().fromDegrees(0));
+      swerveDrive.swerveDrivePoseEstimator.resetRotation(Rotation2d.fromDegrees(0));
       SmartDashboard.putData("field", m_field);
 
     } catch (Exception e)
