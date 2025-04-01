@@ -33,7 +33,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   // * Constants for moving elevator to required heights
   private final double ticksPerInch = (1.0 / 256.0);
   // Heights are relative to the end-effector at it's zero position
-  private final double levelHeights[] = { 0.5, 8, 20, 33};
+  private final double levelHeights[] = { 0.5, 8, 20, 33.5};
   double setpoint;
   double measurement;
   private PIDController pid;
@@ -43,7 +43,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public ElevatorSubsystem() {
     // Set the conversion factor so meaningful distance values are available
-    kP = 0.075;
+    kP = 0.068;
     kI = 0;
     kD = 0.01;
 
@@ -51,9 +51,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorEncoder.setDistancePerPulse(ticksPerInch);
 
     pid = new PIDController(kP, kI, kD);
-
-    SmartDashboard.putNumber("setpoint", 0);
-    SmartDashboard.putNumber("measurement", 0);
 
   }
 

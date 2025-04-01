@@ -26,7 +26,7 @@ public final class Constants {
     public static final double DEADBAND = 0.04;
   }
 
-  public static final double maxSpeed = Units.feetToMeters(5);
+  public static final double maxSpeed = Units.feetToMeters(10);
 
   // cameraOnRobot describes the camera's location relative to the robot center
   // with forward = +Y

@@ -14,6 +14,7 @@ import frc.robot.commands.CoralInCommand;
 import frc.robot.commands.AprilTagAlignCommandPathPlanner;
 import frc.robot.commands.RelativeMovementCommand;
 import frc.robot.commands.ClawDefence;
+import frc.robot.commands.ClawNetCommand;
 import frc.robot.commands.ClawPrepCommand;
 import frc.robot.commands.CoralOutCommand;
 import frc.robot.commands.DriveForwards;
@@ -162,6 +163,7 @@ public class RobotContainer {
         buttons.button(5).whileTrue(claw.wristDefence()).onFalse(claw.stopWrist());
         buttons.button(4).whileTrue(elevator.goToLevel(0)).onFalse(elevator.stop());
         buttons.button(4).whileTrue(claw.wristProcessor()).onFalse(claw.stopWrist());
+        buttons.button(3).whileTrue(new SequentialCommandGroup(new ElevatorUpCommand(elevator, 34.5), new ClawNetCommand(claw))).onFalse(elevator.stop()).onFalse(claw.stopWrist());
 
         m_driverController.leftBumper().whileTrue(drivebase.turnLeft());
         m_driverController.rightBumper().whileTrue(drivebase.turnRight());

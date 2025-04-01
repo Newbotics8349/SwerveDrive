@@ -28,7 +28,7 @@ public class ClawSubsystem extends SubsystemBase {
   
 
   SparkMax wristMotor = new SparkMax(60, MotorType.kBrushless);
-  DutyCycleEncoder wristEncoder = new DutyCycleEncoder(4, 360.0, 24);
+  DutyCycleEncoder wristEncoder = new DutyCycleEncoder(4, 360.0, 44);
   double wristValue;
 
   /**
@@ -47,7 +47,7 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command wristFloor() {
     return run(() -> {
-      double motorSpeed = pid.calculate(wristEncoder.get(), 80);
+      double motorSpeed = pid.calculate(wristEncoder.get(), 97);
       wristMotor.set(motorSpeed);
     });
   }
@@ -73,6 +73,13 @@ public class ClawSubsystem extends SubsystemBase {
     });
   }
 
+  public Command wristNet() {
+    return run(() -> {
+      double motorSpeed = pid.calculate(wristEncoder.get(), 190);
+      wristMotor.set(motorSpeed);
+    });
+  }
+
   public void wristCoralOutAuto() {
     double motorSpeed = pid.calculate(wristEncoder.get(), 120);
     wristMotor.set(motorSpeed);
@@ -91,6 +98,11 @@ public class ClawSubsystem extends SubsystemBase {
 
   public void wristDefenceError() {
     double motorSpeed = pid.calculate(wristEncoder.get(), 200);
+    wristMotor.set(motorSpeed);
+  }
+
+  public void wristNetAuto() {
+    double motorSpeed = pid.calculate(wristEncoder.get(), 190);
     wristMotor.set(motorSpeed);
   }
 
