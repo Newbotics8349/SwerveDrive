@@ -165,8 +165,8 @@ public class RobotContainer {
         buttons.button(4).whileTrue(claw.wristProcessor()).onFalse(claw.stopWrist());
         buttons.button(3).whileTrue(new SequentialCommandGroup(new ElevatorUpCommand(elevator, 34.5), new ClawNetCommand(claw))).onFalse(elevator.stop()).onFalse(claw.stopWrist());
 
-        m_driverController.leftBumper().whileTrue(drivebase.turnLeft());
-        m_driverController.rightBumper().whileTrue(drivebase.turnRight());
+        m_driverController.leftBumper().whileTrue(intakeOuttake.clawIn()).onFalse(intakeOuttake.clawStop());
+        m_driverController.rightBumper().whileTrue(intakeOuttake.clawOut()).onFalse(intakeOuttake.clawStop());
 
         //m_driverController.leftTrigger().whileTrue(new AdjustTowardsAprilTagCommand(drivebase,vision,15)); still iffy
 
