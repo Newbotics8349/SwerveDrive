@@ -184,14 +184,14 @@ public class SwerveSubsystem extends SubsystemBase {
    * 
     */
     public void driveFieldOriented(ChassisSpeeds velocity) {
-      System.out.println("Field:   X Speed: " + velocity.vxMetersPerSecond + " Y Speed: " + velocity.vyMetersPerSecond + " R Speed: " + velocity.omegaRadiansPerSecond);
+      // System.out.println("Field:   X Speed: " + velocity.vxMetersPerSecond + " Y Speed: " + velocity.vyMetersPerSecond + " R Speed: " + velocity.omegaRadiansPerSecond);
         swerveDrive.driveFieldOriented(new ChassisSpeeds(velocity.vxMetersPerSecond*-1,velocity.vyMetersPerSecond*-1,velocity.omegaRadiansPerSecond*-1));
     }
 
     public Command driveFieldOriented(Supplier<ChassisSpeeds> velocitysupplier) {
         return run(() -> {
           ChassisSpeeds velocity = velocitysupplier.get();
-          System.out.println("Field:   X Speed: " + velocity.vxMetersPerSecond + " Y Speed: " + velocity.vyMetersPerSecond + " R Speed: " + velocity.omegaRadiansPerSecond);
+          // System.out.println("Field:   X Speed: " + velocity.vxMetersPerSecond + " Y Speed: " + velocity.vyMetersPerSecond + " R Speed: " + velocity.omegaRadiansPerSecond);
             swerveDrive.driveFieldOriented(new ChassisSpeeds(velocity.vxMetersPerSecond*-1,velocity.vyMetersPerSecond*-1,velocity.omegaRadiansPerSecond*-1));
         });
     }
@@ -203,14 +203,14 @@ public class SwerveSubsystem extends SubsystemBase {
    * 
     */
     public void driveRobotOriented(ChassisSpeeds velocity) {
-      System.out.println("Robot :   X Speed: " + velocity.vxMetersPerSecond + " Y Speed: " + velocity.vyMetersPerSecond + " R Speed: " + velocity.omegaRadiansPerSecond);
+      // System.out.println("Robot :   X Speed: " + velocity.vxMetersPerSecond + " Y Speed: " + velocity.vyMetersPerSecond + " R Speed: " + velocity.omegaRadiansPerSecond);
       swerveDrive.drive((new ChassisSpeeds(velocity.vxMetersPerSecond*-1,velocity.vyMetersPerSecond*-1,velocity.omegaRadiansPerSecond*-1)));
   }
 
   public Command driveRobotOriented(Supplier<ChassisSpeeds> velocitysupplier) {
     return run(() -> {
       ChassisSpeeds velocity = velocitysupplier.get();
-      System.out.println("Field:   X Speed: " + velocity.vxMetersPerSecond + " Y Speed: " + velocity.vyMetersPerSecond + " R Speed: " + velocity.omegaRadiansPerSecond);
+      // System.out.println("Field:   X Speed: " + velocity.vxMetersPerSecond + " Y Speed: " + velocity.vyMetersPerSecond + " R Speed: " + velocity.omegaRadiansPerSecond);
         swerveDrive.drive(new ChassisSpeeds(velocity.vxMetersPerSecond*-1,velocity.vyMetersPerSecond*-1,velocity.omegaRadiansPerSecond*-1));
     });
 }

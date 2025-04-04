@@ -50,7 +50,7 @@ public class DriveForwards extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.driveFieldOriented(new ChassisSpeeds(x, y, rotationRadians));
+    m_subsystem.driveFieldOriented(new ChassisSpeeds(x, 0, 0));
   }
 
   // Called once the command ends or is interrupted.
@@ -62,6 +62,6 @@ public class DriveForwards extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return stopWatch.getDuration() > end;
+    return stopWatch.getDuration() > 2.2;
   }
 }

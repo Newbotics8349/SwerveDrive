@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ElevatorUpCommand;
 import frc.robot.commands.ResetCommand;
+import frc.robot.commands.ResetDriveAngleCommand;
 import frc.robot.commands.TimeCommand;
 import frc.robot.subsystems.AprilTagSubsystem;
 import frc.robot.commands.CoralClawCommand;
@@ -163,7 +164,8 @@ public class RobotContainer {
         buttons.button(5).whileTrue(claw.wristDefence()).onFalse(claw.stopWrist());
         buttons.button(4).whileTrue(elevator.goToLevel(0)).onFalse(elevator.stop());
         buttons.button(4).whileTrue(claw.wristProcessor()).onFalse(claw.stopWrist());
-        buttons.button(3).whileTrue(new SequentialCommandGroup(new ElevatorUpCommand(elevator, 34.5), new ClawNetCommand(claw))).onFalse(elevator.stop()).onFalse(claw.stopWrist());
+        buttons.button(3).whileTrue(elevator.goToLevel(3)).onFalse(elevator.stop());
+        buttons.button(3).whileTrue(claw.wristFloor()).onFalse(claw.stopWrist());
 
         m_driverController.leftBumper().whileTrue(intakeOuttake.clawIn()).onFalse(intakeOuttake.clawStop());
         m_driverController.rightBumper().whileTrue(intakeOuttake.clawOut()).onFalse(intakeOuttake.clawStop());
@@ -175,11 +177,11 @@ public class RobotContainer {
         
         m_driverController.b().onChange(drivebase.flipCommand());
         
-        m_driverController.a().whileTrue(drivebase.resetGyro());
+        m_driverController.a().onTrue(new ResetDriveAngleCommand(drivebase));
 
         m_driverController.x().whileTrue(drivebase.robotForwards());
 
-        m_driverController.a().whileTrue(new SequentialCommandGroup(new TimeCommand(), new ResetCommand(elevator), new ClawDefence(claw)));
+        // m_driverController.a().whileTrue(new SequentialCommandGroup(new TimeCommand(), new ResetCommand(elevator), new ClawDefence(claw)));
     }
 
     /**
@@ -187,18 +189,22 @@ public class RobotContainer {
      *
      * @return the command to run in autonomous
      */
-    private Command getBasicAutonomousCommand() {
+    public Command getBasicAutonomousCommand() {
+        System.out.println("auto ran");
         return new SequentialCommandGroup(
+            
            // new TurnCommand(drivebase),
-           new DriveForwards(drivebase, -1, 0, 0, 2),
+           new DriveForwards(drivebase, 0.4),
            new ClawPrepCommand(claw),
-           new ElevatorUpCommand(elevator, 5),
+           new ElevatorUpCommand(elevator, 2),
            new ParallelCommandGroup(
                new ElevatorStayCommand(elevator),
                new CoralClawCommand(claw),
                new CoralOutCommand(intakeOuttake)
            ),
+           
            new DriveForwards(drivebase, -0.1, 0, 0, 2),
+           
            new ParallelCommandGroup(
                new ElevatorUpCommand(elevator, 20),
                new ClawPrepCommand(claw)
@@ -208,6 +214,7 @@ public class RobotContainer {
                new CoralInCommand(intakeOuttake),
                new ClawPrepCommand(claw)                
             )
+            
         );
     }
 

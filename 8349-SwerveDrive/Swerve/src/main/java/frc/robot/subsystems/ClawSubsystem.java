@@ -54,14 +54,14 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command wristReef() {
     return run(() -> {
-      double motorSpeed = pid.calculate(wristEncoder.get(), 138);
+      double motorSpeed = pid.calculate(wristEncoder.get(), 143);
       wristMotor.set(motorSpeed);
     });
   }
 
   public Command wristProcessor() {
     return run(() -> {
-      double motorSpeed = pid.calculate(wristEncoder.get(), 130);
+      double motorSpeed = pid.calculate(wristEncoder.get(), 145);
       wristMotor.set(motorSpeed);
     });
   }
@@ -75,7 +75,7 @@ public class ClawSubsystem extends SubsystemBase {
 
   public Command wristNet() {
     return run(() -> {
-      double motorSpeed = pid.calculate(wristEncoder.get(), 190);
+      double motorSpeed = pid.calculate(wristEncoder.get(), 125);
       wristMotor.set(motorSpeed);
     });
   }

@@ -49,6 +49,6 @@ public class CoralOutCommand extends Command {
   @Override
   public boolean isFinished() {
     
-    return timer.getDuration() > 4;
+    return timer.getDuration() > 3;
   }
 }

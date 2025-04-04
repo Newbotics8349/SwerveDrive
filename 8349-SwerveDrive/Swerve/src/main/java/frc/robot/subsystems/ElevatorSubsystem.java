@@ -33,7 +33,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   // * Constants for moving elevator to required heights
   private final double ticksPerInch = (1.0 / 256.0);
   // Heights are relative to the end-effector at it's zero position
-  private final double levelHeights[] = { 0.5, 8, 20, 33.5};
+  private final double levelHeights[] = { 0.5, 11, 22, 2};
   double setpoint;
   double measurement;
   private PIDController pid;
@@ -55,6 +55,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public double getElevatorDistance() {
+    // return elevatorEncoder.getAbsoluteDistance();
     return elevatorEncoder.getDistance();
   }
 
@@ -62,12 +63,16 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Check for valid args
     if (level < 0 || level >= levelHeights.length)
       return run(() -> {
+        System.out.println(elevatorEncoder.getDistance());
+
       });
 
     // Determine associated height needed to be travelled to
     double targetHeight = levelHeights[level];
     return run(
         () -> {
+          System.out.println(elevatorEncoder.getDistance());
+
           double motorSpeed = pid.calculate(elevatorEncoder.getDistance(), targetHeight);
           leftMotor.set(-motorSpeed);
           rightMotor.set(motorSpeed);
@@ -124,6 +129,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   // Limit switch condition
+  //returns true or false based on if the limit switch is at its limit
   public boolean atZero() {
     return lSwitch.get();
   }
@@ -136,12 +142,14 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     // Reset the encoder if the limit switch is triggered
     if (atZero())
-      elevatorEncoder.reset();
-      leftMotor.set(0);
-      rightMotor.set(0);
+    //commented out cuz limit switch keeps triggering 
+      // elevatorEncoder.reset();
+      // leftMotor.set(0);
+      // rightMotor.set(0);
 
     SmartDashboard.putNumber("ElevatorDistance", elevatorEncoder.getDistance());
-  }
+    System.out.println("PRessed");
+    }
 
   @Override
   public void simulationPeriodic() {
